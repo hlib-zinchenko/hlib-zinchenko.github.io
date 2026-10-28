@@ -227,6 +227,9 @@
 
     .dialog button:active { border-style: inset; }
 
+    .dialog.warning .icon { background: #ffd000; color: #000; box-shadow: inset -2px -2px 0 #806800; }
+    .dialog.fatal .bar { background: linear-gradient(90deg, #800000, #d01010); }
+
     .window .body {
       margin: 4px;
       padding: 10px 14px;
@@ -409,8 +412,38 @@
     .robots .robots-prompt { margin: 0 0 6px; text-align: left; color: #c0c0c0; }
     .robots .robots-human { color: #66ff66; font-size: 12px; }
 
-    .year { cursor: help; border-bottom: 1px dotted currentColor; }
-    .fine { text-align: center; font-size: 12px; color: #aaaaff; }
+    .fine { position: relative; text-align: center; font-size: 12px; color: #aaaaff; }
+
+    .year {
+      padding: 0;
+      background: none;
+      border: 0;
+      border-bottom: 1px dotted currentColor;
+      font: inherit;
+      color: inherit;
+      cursor: help;
+    }
+
+    /* Win95 tooltip. title="" never shows on phones, so a tap toggles .open too. */
+    .tip {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: min(300px, 90vw);
+      padding: 4px 6px;
+      background: #ffffe1;
+      border: 1px solid #000;
+      box-shadow: 2px 2px 0 #000;
+      color: #000;
+      font: 12px/1.35 Tahoma, Verdana, sans-serif;
+      text-align: left;
+      visibility: hidden;
+      z-index: 10;
+    }
+
+    .year:hover + .tip, .year:focus-visible + .tip, .tip.open { visibility: visible; }
 
     .sparkle {
       position: fixed;
@@ -534,10 +567,10 @@
             <h3><a href="https://github.com/hlib-zinchenko/Hlibz.EntityFrameworkCore.ModelRules">Hlibz.EntityFrameworkCore.ModelRules</a></h3>
             <p>Your team's conventions, enforced on the EF Core model. Break one and the model fails to build.
               (<a href="https://www.nuget.org/packages/Hlibz.EntityFrameworkCore.ModelRules">NuGet</a>)</p>
-            <h3><a href="https://github.com/hlib-zinchenko/Hlibz.TypeRules.Analyzers">Hlibz.TypeRules.Analyzers</a><span class="new">NEW!</span></h3>
+            <h3><a href="https://github.com/hlib-zinchenko/Hlibz.TypeRules.Analyzers">Hlibz.TypeRules.Analyzers</a></h3>
             <p>Roslyn analyzers for the shape of a type, reported while you type.
               (<a href="https://www.nuget.org/packages/Hlibz.TypeRules.Analyzers">NuGet</a>)</p>
-            <h3><a href="https://github.com/hlib-zinchenko/Hlibz.Redoc">Hlibz.Redoc</a></h3>
+            <h3><a href="https://github.com/hlib-zinchenko/Hlibz.Redoc">Hlibz.Redoc</a><span class="new">NEW!</span></h3>
             <p>ReDoc for ASP.NET Core: dark theme, document picker, or a standalone ReDoc 3 host.
               (<a href="https://www.nuget.org/packages/Hlibz.Redoc.AspNetCore">NuGet</a>)</p>
             <h3><a href="https://hlib-zinchenko.github.io/flashcards-pwa/">Flashcards</a></h3>
@@ -561,9 +594,9 @@
         </section>
 
         <div class="dialog" id="all-closed" role="alertdialog" aria-labelledby="all-closed-text" hidden>
-          <div class="bar">Error</div>
+          <div class="bar" id="all-closed-bar">Error</div>
           <div class="content">
-            <span class="icon" aria-hidden="true">×</span>
+            <span class="icon" id="all-closed-icon" aria-hidden="true">×</span>
             <p id="all-closed-text">Ooops, you closed everything :( Did you not like it?</p>
           </div>
           <div class="actions"><button type="button" id="restore-all">Sorry!! Ctrl+Z everything</button></div>
@@ -612,7 +645,7 @@
     </aside>
 
     <p class="fine">
-      © 1994–<span class="year" title="Computed live with JavaScript: new Date().getFullYear(). I do not do newbie mistakes ;)">2026</span> Hlib Zinchenko · This page uses FRAMES-free technology ·
+      © 1994–<button type="button" class="year" aria-describedby="year-tip" aria-expanded="false">2026</button><span class="tip" id="year-tip" role="tooltip">Computed live with JavaScript: <code>new Date().getFullYear()</code>. I do not do newbie mistakes ;)</span> Hlib Zinchenko · This page uses FRAMES-free technology ·
       <a href="/business/">Take me to the boring version</a>
     </p>
   </div>
@@ -649,15 +682,38 @@
         .catch(() => show("-ERROR-"));
 
       // Closable windows: × hides a window, the MeNu brings it back, and closing them all shows a dialog.
+      // Each time everything gets closed the dialog gets grumpier, until the last one only offers a reload.
       const windows = [...document.querySelectorAll("section.window")];
       const allClosed = document.getElementById("all-closed");
-      const syncDialog = () => { allClosed.hidden = windows.some((w) => !w.hidden); };
+      const restoreAll = document.getElementById("restore-all");
+      const stages = [
+        { kind: "error", bar: "Error", icon: "×", text: "Ooops, you closed everything :( Did you not like it?", button: "Sorry!! Ctrl+Z everything" },
+        { kind: "error", bar: "Error", icon: "×", text: "Oops!... you did it again.", button: "Ctrl+Z me baby one more time" },
+        { kind: "error", bar: "Error", icon: "×", text: ">:( >:( >:( Why do you keep closing everything?! This is not a toy, it's a REAL WEB SITE!!!", button: "OK OK, my mistake" },
+        { kind: "warning", bar: "Warning", icon: "!", text: "Please STOP!!! You are using up all our computing power. CPU core overload imminent!!!", button: "I swear it's the last time" },
+        { kind: "fatal", bar: "Fatal error", icon: "×", text: "A fatal exception 0E has occurred: CORE OVERLOAD. The Internet must be rebooted. Please refresh the page.", button: "Reboot (F5)" },
+      ];
+      let timesClosed = 0;
+      const stage = () => stages[Math.min(timesClosed, stages.length) - 1];
+
+      const syncDialog = () => {
+        const wasHidden = allClosed.hidden;
+        allClosed.hidden = windows.some((w) => !w.hidden);
+        if (!wasHidden || allClosed.hidden) return;
+        timesClosed++;
+        const { kind, bar, icon, text, button } = stage();
+        allClosed.className = `dialog ${kind}`;
+        document.getElementById("all-closed-bar").textContent = bar;
+        document.getElementById("all-closed-icon").textContent = icon;
+        document.getElementById("all-closed-text").textContent = text;
+        restoreAll.textContent = button;
+      };
 
       windows.forEach((w) => {
         w.querySelector(".close").addEventListener("click", () => {
           w.hidden = true;
           syncDialog();
-          if (!allClosed.hidden) document.getElementById("restore-all").focus();
+          if (!allClosed.hidden) restoreAll.focus();
         });
       });
 
@@ -671,13 +727,27 @@
         });
       });
 
-      document.getElementById("restore-all").addEventListener("click", () => {
+      restoreAll.addEventListener("click", () => {
+        if (stage().kind === "fatal") {
+          location.reload();
+          return;
+        }
         windows.forEach((w) => { w.hidden = false; });
         syncDialog();
         windows[0].scrollIntoView({ behavior: "smooth", block: "start" });
       });
 
       document.querySelectorAll(".year").forEach((el) => { el.textContent = new Date().getFullYear(); });
+
+      const year = document.querySelector("button.year");
+      const yearTip = document.getElementById("year-tip");
+      const setTip = (open) => {
+        yearTip.classList.toggle("open", open);
+        year.setAttribute("aria-expanded", open);
+      };
+      year.addEventListener("click", () => setTip(!yearTip.classList.contains("open")));
+      document.addEventListener("click", (e) => { if (e.target !== year) setTip(false); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") setTip(false); });
 
       const ring = [
         "https://github.com/hlib-zinchenko/Hlibz.EntityFrameworkCore.ModelRules",
