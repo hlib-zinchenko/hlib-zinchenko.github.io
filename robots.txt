@@ -1,0 +1,5 @@
+# Everyone is welcome, AI recruiter bots included. See HIRE_ME.EXE on the homepage.
+User-agent: *
+Allow: /
+
+Sitemap: https://hzinchenko.com/sitemap.xml
