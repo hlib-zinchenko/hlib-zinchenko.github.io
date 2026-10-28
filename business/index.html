@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hlib Zinchenko · .NET backend engineer</title>
+  <meta name="description" content="Senior .NET backend engineer from Kyiv, Ukraine. Modular monoliths, DDD, CQRS, AI-driven development with Claude Code. Author of open-source EF Core, Roslyn and ASP.NET Core libraries.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="canonical" href="https://hzinchenko.com/business/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Hlib Zinchenko · .NET backend engineer">
+  <meta property="og:description" content="Modular monoliths, DDD, CQRS, AI-driven development with Claude Code. Open-source EF Core, Roslyn and ASP.NET Core libraries.">
+  <meta property="og:url" content="https://hzinchenko.com/business/">
+</head>
+<body>
+  <main>
+    <header class="intro">
+      <p class="eyebrow">Kyiv, Ukraine · Remote</p>
+      <h1>Hlib Zinchenko</h1>
+      <p class="role">Senior .NET backend engineer</p>
+      <p class="lede">
+        10+ years of building web products from scratch to production, most recently as a backend lead.
+        I turn stalled or messy systems into maintainable modular monoliths, and I ship with AI daily.
+      </p>
+      <nav class="links" aria-label="Profiles">
+        <a href="https://linkedin.com/in/hzinchenko">LinkedIn</a>
+        <a href="https://github.com/hlib-zinchenko">GitHub</a>
+      </nav>
+      <p class="fun-link"><a href="/">Prefer the fun version? It has a visitor counter.</a></p>
+    </header>
+
+    <section aria-labelledby="now">
+      <h2 id="now">Now</h2>
+      <ul class="now">
+        <li>
+          <strong>Co-founder &amp; lead engineer</strong> of a pre-launch consumer fintech product:
+          a .NET 10 modular monolith with web and admin apps, built with an agentic Claude Code workflow.
+        </li>
+        <li>
+          <strong>Part-time at Developex</strong>, building AI-powered self-service reporting for a B2B client.
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="experience">
+      <h2 id="experience">Experience</h2>
+      <ol class="timeline">
+        <li>
+          <span class="when">2024 – 2026</span>
+          <div><strong>Developex</strong> · Senior .NET Developer, backend lead on a restaurant POS platform</div>
+        </li>
+        <li>
+          <span class="when">2018 – 2023</span>
+          <div><strong>Dedicated Lab</strong> · Lead .NET Engineer at a studio serving US clients; hired and mentored the team</div>
+        </li>
+        <li>
+          <span class="when">2017 – 2018</span>
+          <div><strong>Speak With A Geek</strong> · .NET Developer</div>
+        </li>
+        <li>
+          <span class="when">2015 – 2017</span>
+          <div><strong>AltexSoft</strong> · Junior .NET Developer</div>
+        </li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="work">
+      <h2 id="work">Selected work</h2>
+
+      <article class="project">
+        <h3>Rescuing a stalled rewrite</h3>
+        <p>
+          A restaurant POS platform mid-way through a Ruby-to-.NET rewrite, weeks before its release date, with no
+          docs, hardcoded credentials, no foreign keys and nobody who could explain the business logic. I got the date
+          moved to sort out requirements with the client, took over as backend lead, re-architected the backend into a
+          modular monolith, delivered multi-tenancy and Auth0, and hired an engineer to stabilize the team.
+        </p>
+        <p class="outcome">Brought to release readiness for a restaurant pilot</p>
+      </article>
+
+      <article class="project">
+        <h3>Dashboards from 20 seconds to 1</h3>
+        <p>
+          Occupancy dashboards for an office-space analytics product were taking 20 seconds over a few million sensor
+          readings. The problem was what we stored, not how we queried it: I dropped the data the dashboards never
+          needed and added the indexes they did.
+        </p>
+        <p class="outcome">20 s → 1 s response time</p>
+      </article>
+
+      <article class="project">
+        <h3>Halving the SMS bill</h3>
+        <p>
+          Report notifications on an employee survey platform went out as 2–3 SMS segments each, because of full names,
+          untrimmed titles and raw S3 links. I shortened the text and built a small base62 URL shortener, so every
+          message fits in one segment.
+        </p>
+        <p class="outcome">~50–60% lower SMS cost</p>
+      </article>
+
+      <article class="project">
+        <h3>Making AI-written code safe to ship</h3>
+        <p>
+          On the fintech product, agents write most of the code, so the rules live where an agent can't skip them:
+          module boundaries enforced by project references, banned APIs, and analyzers, including my own ModelRules
+          and TypeRules, that break the build. Architecture guides, a glossary and ADRs give the agent context, and I
+          review every change.
+        </p>
+        <p class="outcome">Backend, web and admin apps built by one engineer</p>
+      </article>
+    </section>
+
+    <section aria-labelledby="oss">
+      <h2 id="oss">Open source</h2>
+      <p class="section-note">Libraries that grew out of conventions I kept enforcing by hand in code reviews.</p>
+
+      <article class="project">
+        <h3><a href="https://github.com/hlib-zinchenko/Hlibz.EntityFrameworkCore.ModelRules">Hlibz.EntityFrameworkCore.ModelRules</a></h3>
+        <p>
+          Your team's conventions, enforced on the EF Core model. If an entity breaks one, the model fails
+          to build, at startup or in a unit test. 14 rules plus DDD aggregate boundaries,
+          EF Core 8–10, tested on PostgreSQL, SQL Server, SQLite and MySQL.
+        </p>
+        <p class="meta">
+          <span>EF Core</span>
+          <a href="https://www.nuget.org/packages/Hlibz.EntityFrameworkCore.ModelRules">NuGet</a>
+        </p>
+      </article>
+
+      <article class="project">
+        <h3><a href="https://github.com/hlib-zinchenko/Hlibz.TypeRules.Analyzers">Hlibz.TypeRules.Analyzers</a></h3>
+        <p>
+          Roslyn analyzers for the shape of a type, based on what it inherits or implements. Endpoints sealed
+          and internal, a dedicated interface per handler, entities without public setters, immutable value
+          objects. Configured in <code>.editorconfig</code>, reported while you type.
+        </p>
+        <p class="meta">
+          <span>Roslyn</span>
+          <a href="https://www.nuget.org/packages/Hlibz.TypeRules.Analyzers">NuGet</a>
+        </p>
+      </article>
+
+      <article class="project">
+        <h3><a href="https://github.com/hlib-zinchenko/Hlibz.Redoc">Hlibz.Redoc</a></h3>
+        <p>
+          ReDoc API docs for ASP.NET Core: a dark theme and a document picker for the Swashbuckle and
+          Redoc.AspNetCore pages you already serve, or a standalone ReDoc 3 host with per-document
+          authorization, a strict CSP and no third-party requests.
+        </p>
+        <p class="meta">
+          <span>ASP.NET Core</span>
+          <a href="https://www.nuget.org/packages/Hlibz.Redoc.AspNetCore">NuGet</a>
+        </p>
+      </article>
+    </section>
+
+    <section aria-labelledby="side">
+      <h2 id="side">Side projects</h2>
+      <article class="project">
+        <h3><a href="https://hlib-zinchenko.github.io/flashcards-pwa/">Flashcards</a></h3>
+        <p>
+          An offline-first flashcards app that installs to an iPhone home screen, with no App Store, account
+          or server. Built for my partner after no existing app fit how she studies.
+        </p>
+        <p class="meta">
+          <span>Svelte 5 · TypeScript · IndexedDB</span>
+          <a href="https://github.com/hlib-zinchenko/flashcards-pwa">Source</a>
+        </p>
+      </article>
+    </section>
+
+    <section aria-labelledby="stack">
+      <h2 id="stack">Stack</h2>
+      <dl class="stack">
+        <dt>Architecture</dt><dd>DDD, CQRS, Clean Architecture, modular monoliths, event-driven, multi-tenancy</dd>
+        <dt>Backend</dt><dd>C#, .NET, ASP.NET Core, EF Core, MassTransit, MediatR, FluentValidation, Hangfire, Quartz, SignalR, Serilog, Roslyn analyzers</dd>
+        <dt>Data &amp; cloud</dt><dd>PostgreSQL, MS SQL, MySQL, AWS (EC2, ECS, RDS, S3, SES, SNS, CloudWatch), Docker, GitHub Actions, GitLab CI, Azure DevOps</dd>
+        <dt>Testing</dt><dd>xUnit, Testcontainers, Moq</dd>
+        <dt>Integrations</dt><dd>Auth0, Stripe, Stream (delivery aggregators)</dd>
+        <dt>Frontend</dt><dd>TypeScript, Vue.js (logic side), React (web and admin apps shipped with Claude Code)</dd>
+        <dt>AI</dt><dd>Claude Code agentic workflows, LLM-powered features</dd>
+      </dl>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <span class="year">2026</span> Hlib Zinchenko</p>
+  </footer>
+  <script>
+    document.querySelectorAll(".year").forEach((el) => { el.textContent = new Date().getFullYear(); });
+  </script>
+</body>
+</html>

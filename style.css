@@ -114,6 +114,13 @@ h1 {
 
 .links a:hover { border-color: var(--accent); }
 
+.fun-link {
+  margin: 1rem 0 0;
+  font: 0.8125rem var(--mono);
+  color: var(--muted);
+}
+
+
 section {
   margin-top: 4.5rem;
 }
