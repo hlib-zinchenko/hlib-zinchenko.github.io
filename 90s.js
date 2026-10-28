@@ -96,6 +96,18 @@
     windows[0].scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
+  // "Was it worth it?" Yes and No get the same honest reply; a button with data-answer gets its own.
+  const worthAnswer = document.getElementById("worth-answer");
+  const worthText = document.getElementById("worth-answer-text");
+  const honestReply = worthText.textContent;
+  document.querySelectorAll(".worth-btns button").forEach((b) => {
+    b.addEventListener("click", () => {
+      worthText.textContent = b.dataset.answer ?? honestReply;
+      worthAnswer.showModal();
+    });
+  });
+  document.getElementById("worth-ok").addEventListener("click", () => worthAnswer.close());
+
   document.querySelectorAll(".year").forEach((el) => { el.textContent = new Date().getFullYear(); });
 
   const year = document.querySelector("button.year");

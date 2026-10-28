@@ -202,7 +202,7 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
 
 .dialog .actions { padding: 0 16px 14px; text-align: center; }
 
-.dialog button {
+.dialog button, .win-btn {
   min-width: 110px;
   padding: 5px 14px;
   background: #c0c0c0;
@@ -212,10 +212,14 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
   cursor: pointer;
 }
 
-.dialog button:active { border-style: inset; }
+.dialog button:active, .win-btn:active { border-style: inset; }
 
 .dialog.warning .icon { background: #ffd000; color: #000; box-shadow: inset -2px -2px 0 #806800; }
 .dialog.fatal .bar { background: linear-gradient(90deg, #800000, #d01010); }
+.dialog .icon.question { background: #0000cc; box-shadow: inset -2px -2px 0 #000060; }
+/* A real modal: the browser's <dialog>, centred over a dimmed page. */
+dialog.dialog { width: min(420px, calc(100vw - 32px)); margin: auto; padding: 0; text-align: left; }
+dialog.dialog::backdrop { background: rgba(0, 0, 51, 0.65); }
 
 .window .body {
   margin: 4px;
@@ -336,6 +340,13 @@ table.stack td { background: #ffffcc; }
   color: #008000;
   font: bold 14px "Courier New", monospace;
 }
+
+.hobbies.dislikes .ico { color: #cc0000; }
+.hobbies ul { margin: 4px 0 0; padding-left: 1.2em; list-style: square; }
+.hobbies ul li { display: list-item; margin: 3px 0; }
+
+.worth { margin: 14px 0 6px; text-align: center; font-size: 19px; }
+.worth-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 8px; }
 
 .cowabunga {
   color: #ff6600;
