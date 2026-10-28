@@ -187,6 +187,8 @@ h2::before { content: "// "; color: var(--accent); }
 
 .timeline li + li { margin-top: 0.75rem; }
 
+.languages { margin: 1.25rem 0 0; }
+
 .timeline .when {
   padding-top: 0.2em;
   font: 0.8125rem var(--mono);
