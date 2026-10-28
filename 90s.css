@@ -454,16 +454,22 @@ table.stack td { background: #ffffcc; }
 
 .year:hover + .tip, .year:focus-visible + .tip, .tip.open { visibility: visible; }
 
-.sparkle {
+/* Matrix rain behind the cursor: each glyph drips down, flickers and dims like phosphor on an old CRT. */
+.trail {
   position: fixed;
   pointer-events: none;
-  font-size: 14px;
-  animation: fall 0.9s ease-out forwards;
+  font: bold 15px "MS Gothic", "Osaka", "Courier New", monospace;
+  text-shadow: 0 0 3px rgba(0, 255, 65, 0.45), 0 0 8px rgba(0, 143, 17, 0.35);
+  filter: blur(0.3px);
+  animation: drip 1.4s linear forwards;
   z-index: 99;
 }
 
-@keyframes fall {
-  to { transform: translateY(30px) rotate(90deg); opacity: 0; }
+@keyframes drip {
+  0% { transform: translateY(0); color: #3cdc5c; }
+  12% { color: #008f11; }
+  60% { color: #006b0d; opacity: 0.9; }
+  100% { transform: translateY(70px); color: #003b00; opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

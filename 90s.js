@@ -121,20 +121,24 @@
 
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  const glyphs = ["✦", "✧", "★", "☆", "✶"];
-  const colors = ["#ff0", "#0ff", "#f0f", "#0f0", "#fff"];
+  // Wake up, Neo... Half-width katakana and digits, like the code in The Matrix.
+  const glyphs = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ0123456789";
+  const glyph = () => glyphs[Math.floor(Math.random() * glyphs.length)];
   let last = 0;
   addEventListener("pointermove", (e) => {
     const now = performance.now();
     if (now - last < 40) return;
     last = now;
     const s = document.createElement("span");
-    s.className = "sparkle";
-    s.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
-    s.style.color = colors[Math.floor(Math.random() * colors.length)];
+    s.className = "trail";
+    s.textContent = glyph();
     s.style.left = `${e.clientX + 6}px`;
     s.style.top = `${e.clientY + 6}px`;
     document.body.appendChild(s);
-    s.addEventListener("animationend", () => s.remove());
+    const flicker = setInterval(() => { s.textContent = glyph(); }, 100);
+    s.addEventListener("animationend", () => {
+      clearInterval(flicker);
+      s.remove();
+    });
   });
 })();
