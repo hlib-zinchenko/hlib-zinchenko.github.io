@@ -391,11 +391,33 @@
       image-rendering: pixelated;
     }
 
-    .gallery figcaption {
+    .me {
+      float: right;
+      margin: 0 0 8px 12px;
+      padding: 6px 6px 4px;
+      background: #c0c0c0;
+      border: 2px outset #fff;
+    }
+
+    .me img {
+      display: block;
+      width: 150px;
+      height: auto;
+      border: 2px inset #fff;
+      image-rendering: pixelated;
+    }
+
+    .me figcaption, .gallery figcaption {
       margin-top: 3px;
       text-align: center;
       font: 12px "MS Sans Serif", Tahoma, Geneva, sans-serif;
     }
+
+    @media (max-width: 480px) {
+      .me img { width: 110px; }
+    }
+
+    #about .body { display: flow-root; }
 
     .robots {
       margin: 14px auto;
@@ -492,6 +514,7 @@
         <section class="window" id="about">
           <div class="bar">ABOUT_ME.TXT - Notepad <div class="btns"><span>_</span><span>□</span><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
           <div class="body">
+            <figure class="me"><img src="/img/me.jpg" width="240" height="320" alt="Hlib, smiling, in a black T-shirt, with long hair and a moustache"><figcaption>This is me!!!</figcaption></figure>
             <p>
               Hi!!! Welcome 2 my page!!! I have <b>10+ years</b> of building web products from scratch to production,
               most recently as a backend lead. I turn stalled or messy systems into maintainable modular monoliths,
