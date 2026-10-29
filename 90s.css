@@ -398,6 +398,26 @@ table.stack td { background: #ffffcc; }
   font: 12px "MS Sans Serif", Tahoma, Geneva, sans-serif;
 }
 
+/* The caption wraps to the photo's width instead of stretching the frame. */
+.gallery figcaption { width: 0; min-width: 100%; }
+.gallery figcaption small { display: block; margin-top: 2px; font-size: 11px; font-style: italic; color: #333; }
+
+.cheats-link {
+  padding: 0;
+  background: none;
+  border: 0;
+  color: #0000ee;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.dialog .content.notepad { display: block; margin: 0 8px 12px; padding: 10px 12px; background: #fff; border: 2px inset #fff; font-size: 14px; }
+.dialog .content.notepad p { margin: 10px 0 0; }
+.cheat-list { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 0; }
+.cheat-list dt { font: bold 13px "Courier New", Courier, monospace; }
+.cheat-list dd { margin: 0; }
+
 @media (max-width: 480px) {
   .me img { width: 110px; }
 }

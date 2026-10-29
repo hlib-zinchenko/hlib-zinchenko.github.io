@@ -108,6 +108,11 @@
   });
   document.getElementById("worth-ok").addEventListener("click", () => worthAnswer.close());
 
+  // The "cheat codes" link under the Vice City photo opens them in a Notepad dialog.
+  const cheats = document.getElementById("cheats");
+  document.getElementById("cheats-open").addEventListener("click", () => cheats.showModal());
+  document.getElementById("cheats-ok").addEventListener("click", () => cheats.close());
+
   document.querySelectorAll(".year").forEach((el) => { el.textContent = new Date().getFullYear(); });
 
   const year = document.querySelector("button.year");
