@@ -95,16 +95,19 @@
     restoreAll.textContent = button;
   };
 
-  windows.forEach((w) => {
+  windows.forEach((w, i) => {
     const close = w.querySelector(".close");
+    const title = w.querySelector(".bar h2");
     // "Close window: ABOUT_ME.TXT - Notepad", so a screen reader can tell the × buttons apart.
-    close.setAttribute("aria-label", `${close.getAttribute("aria-label")}: ${w.querySelector(".bar h2").textContent}`);
+    close.setAttribute("aria-label", `${close.getAttribute("aria-label")}: ${title.textContent}`);
+    title.tabIndex = -1;
     close.addEventListener("click", () => {
       w.hidden = true;
       syncDialog();
-      // The button just vanished, so keyboard focus moves to something that still exists.
-      if (!allClosed.hidden) restoreAll.focus();
-      else document.querySelector(`nav.sidebar a[href="#${w.id}"]`)?.focus();
+      // The button just vanished, so keyboard focus moves to the window that took its place.
+      // preventScroll: focusing something off-screen would make the page jump.
+      const next = windows.slice(i + 1).find((x) => !x.hidden) ?? windows.slice(0, i).reverse().find((x) => !x.hidden);
+      (allClosed.hidden ? next.querySelector(".bar h2") : restoreAll).focus({ preventScroll: true });
     });
   });
 

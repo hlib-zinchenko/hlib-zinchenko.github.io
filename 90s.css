@@ -521,6 +521,7 @@ table.stack td { background: #ffffcc; }
 .skip:focus { top: 8px; }
 
 .window .bar h2 { margin: 0; font: inherit; overflow-wrap: anywhere; }
+.window .bar h2:focus-visible { outline: 2px dotted #fff; outline-offset: 2px; }
 main:focus { outline: none; }
 
 /* Language flags in the top right, like every homepage in 1999. */
