@@ -343,7 +343,7 @@ table.stack td { background: #ffffcc; }
 }
 
 .gallery-title {
-  margin-top: 14px !important;
+  margin-top: 0 !important;
   text-align: center;
   font: bold 18px "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive;
   color: #800080;
