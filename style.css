@@ -110,7 +110,7 @@ h1 {
   transition: color 0.15s, border-color 0.15s;
 }
 
-.links a::after { content: "↗"; font-size: 0.85em; color: var(--muted); }
+.links a::after { content: "↗"; content: "↗" / ""; font-size: 0.85em; color: var(--muted); }
 
 .links a:hover { border-color: var(--accent); }
 
@@ -133,7 +133,7 @@ h2 {
   text-transform: lowercase;
 }
 
-h2::before { content: "// "; color: var(--accent); }
+h2::before { content: "// "; content: "// " / ""; color: var(--accent); }
 
 .section-note { margin: 0 0 1.5rem; color: var(--muted); }
 
@@ -171,7 +171,7 @@ h2::before { content: "// "; color: var(--accent); }
   color: var(--accent);
 }
 
-.project .outcome::before { content: "→ "; }
+.project .outcome::before { content: "→ "; content: "→ " / ""; }
 
 .timeline {
   margin: 0;
@@ -220,3 +220,7 @@ footer {
 }
 
 footer p { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}

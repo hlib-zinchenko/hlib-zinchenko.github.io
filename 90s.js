@@ -1,5 +1,31 @@
 // Shared script for the 90s homepage: / and /ua/.
 (() => {
+  // Animations: the button at the top stops them all, and the choice is remembered.
+  // With no saved choice, the system's "reduce motion" setting decides.
+  const MOTION_KEY = "hz90s-motion";
+  const MOTION_TEXT = {
+    en: { stop: "Stop animations", play: "Play animations" },
+    uk: { stop: "Зупинити анімацію", play: "Увімкнути анімацію" },
+  }[document.documentElement.lang] ?? { stop: "Stop animations", play: "Play animations" };
+  let saved = null;
+  try { saved = localStorage.getItem(MOTION_KEY); } catch {}
+  let motion = saved ? saved === "on" : !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const motionToggle = document.getElementById("motion-toggle");
+  const applyMotion = () => {
+    document.documentElement.classList.toggle("no-motion", !motion);
+    document.documentElement.classList.toggle("motion-on", motion);
+    motionToggle.innerHTML = motion
+      ? `<span aria-hidden="true">■</span> ${MOTION_TEXT.stop}`
+      : `<span aria-hidden="true">▶</span> ${MOTION_TEXT.play}`;
+  };
+  applyMotion();
+  motionToggle.hidden = false;
+  motionToggle.addEventListener("click", () => {
+    motion = !motion;
+    try { localStorage.setItem(MOTION_KEY, motion ? "on" : "off"); } catch {}
+    applyMotion();
+  });
+
   // Real counter: AWS Lambda + DynamoDB, see _infra/visitor-counter.
   // Each browser is counted once; later visits only read the number.
   const COUNTER_URL = "https://5xswyi5y55xzsyrqgizq2sp3qy0ymcwz.lambda-url.eu-north-1.on.aws/?id=90s";
@@ -7,6 +33,7 @@
   const counter = document.getElementById("counter");
 
   const show = (text) => {
+    counter.setAttribute("aria-label", /^\d+$/.test(text) ? String(Number(text)) : text.replace(/[^\w]/g, "") || "…");
     counter.innerHTML = text
       .padStart(7, "0")
       .split("")
@@ -69,10 +96,15 @@
   };
 
   windows.forEach((w) => {
-    w.querySelector(".close").addEventListener("click", () => {
+    const close = w.querySelector(".close");
+    // "Close window: ABOUT_ME.TXT - Notepad", so a screen reader can tell the × buttons apart.
+    close.setAttribute("aria-label", `${close.getAttribute("aria-label")}: ${w.querySelector(".bar h2").textContent}`);
+    close.addEventListener("click", () => {
       w.hidden = true;
       syncDialog();
+      // The button just vanished, so keyboard focus moves to something that still exists.
       if (!allClosed.hidden) restoreAll.focus();
+      else document.querySelector(`nav.sidebar a[href="#${w.id}"]`)?.focus();
     });
   });
 
@@ -93,7 +125,8 @@
     }
     windows.forEach((w) => { w.hidden = false; });
     syncDialog();
-    windows[0].scrollIntoView({ behavior: "smooth", block: "start" });
+    windows[0].scrollIntoView({ behavior: motion ? "smooth" : "auto", block: "start" });
+    document.getElementById("main").focus({ preventScroll: true });
   });
 
   // "Was it worth it?" Yes and No get the same honest reply; a button with data-answer gets its own.
@@ -136,26 +169,29 @@
     location.href = ring[Math.floor(Math.random() * ring.length)];
   });
 
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
   // Wake up, Neo... Half-width katakana and digits, like the code in The Matrix.
   const glyphs = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ0123456789";
   const glyph = () => glyphs[Math.floor(Math.random() * glyphs.length)];
   let last = 0;
   addEventListener("pointermove", (e) => {
+    if (!motion) return;
     const now = performance.now();
     if (now - last < 40) return;
     last = now;
     const s = document.createElement("span");
     s.className = "trail";
+    s.setAttribute("aria-hidden", "true");
     s.textContent = glyph();
     s.style.left = `${e.clientX + 6}px`;
     s.style.top = `${e.clientY + 6}px`;
     document.body.appendChild(s);
     const flicker = setInterval(() => { s.textContent = glyph(); }, 100);
-    s.addEventListener("animationend", () => {
+    // animationcancel fires when "Stop animations" kills the fall mid-way, so no symbol gets stuck on screen.
+    const done = () => {
       clearInterval(flicker);
       s.remove();
-    });
+    };
+    s.addEventListener("animationend", done);
+    s.addEventListener("animationcancel", done);
   });
 })();
