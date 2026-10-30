@@ -611,6 +611,141 @@ table.stack td { background: #ffffcc; }
   100% { transform: translateY(70px); color: #003b00; opacity: 0; }
 }
 
+/* The DOS prompt, under the two static boxes. */
+.dos { text-align: left; }
+.dos-log { position: relative; max-height: 320px; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.dos-log:focus-visible { outline: 1px dotted #00ff00; }
+.dos-line { display: flex; align-items: baseline; gap: 1ch; margin-top: 6px; }
+.dos-line label { color: #c0c0c0; }
+/* 16px: anything smaller makes an iPhone zoom in on focus. */
+.dos-line input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  outline: 0;
+  color: #00ff00;
+  caret-color: #00ff00;
+  font: 16px "Courier New", monospace;
+}
+.dos:focus-within { border-color: #66ff66; box-shadow: 0 0 0 1px #66ff66; }
+
+.format-screen {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 24px;
+  background: #000;
+  border: 0;
+  color: #c0c0c0;
+  font: 16px/1.4 "Courier New", monospace;
+}
+.format-screen::backdrop { background: #000; }
+.format-screen pre { margin: 0 0 16px; font: inherit; white-space: pre-wrap; }
+
+/* Cheats. Each effect sits above the page and lets clicks through. Motion off skips the animated ones in 90s.js. */
+.cheat-toast {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #ff66cc;
+  color: #ff99dd;
+  font: 15px/1.3 "Courier New", monospace;
+  white-space: pre-line;
+  pointer-events: none;
+}
+.cheat-toast::first-line { color: #ffff66; font: 20px Impact, "Arial Black", sans-serif; letter-spacing: 1px; }
+.cheat-toast:empty { padding: 0; background: none; border: 0; }
+
+.wanted {
+  position: fixed;
+  top: 46px;
+  right: 12px;
+  z-index: 100;
+  color: #ffdd00;
+  font-size: 26px;
+  line-height: 1;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  pointer-events: none;
+}
+
+.fx-hole {
+  position: fixed;
+  z-index: 98;
+  width: 48px;
+  translate: -50% -50%;
+  filter: drop-shadow(0 0 1px #fff);
+  pointer-events: none;
+}
+
+.fx-vehicle {
+  position: fixed;
+  bottom: 6px;
+  left: 0;
+  z-index: 97;
+  width: min(250px, 55vw);
+  animation: roll 5s linear both;
+  pointer-events: none;
+}
+.fx-vehicle.truck { width: min(290px, 65vw); animation-direction: reverse; }
+.fx-vehicle svg { display: block; width: 100%; height: auto; }
+.fx-vehicle text { fill: #fff; font: 34px Impact, "Arial Black", sans-serif; letter-spacing: 1px; text-anchor: middle; }
+.fx-vehicle .wheel { transform-box: fill-box; transform-origin: center; animation: spin 0.7s linear infinite; }
+.fx-vehicle.truck .wheel { animation-direction: reverse; }
+@keyframes roll {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100vw); }
+}
+
+.fx-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 96;
+  background: #fff;
+  animation: fx-flash 0.4s ease-out both;
+  pointer-events: none;
+}
+@keyframes fx-flash { from { opacity: 0.9; } to { opacity: 0; } }
+
+.fx-boom {
+  position: fixed;
+  z-index: 97;
+  width: min(280px, 60vw);
+  translate: -50% -50%;
+  animation: fx-boom 0.9s ease-out both;
+  pointer-events: none;
+}
+.fx-boom svg { display: block; width: 100%; height: auto; }
+.fx-boom text { fill: #fff; stroke: #000; stroke-width: 5px; paint-order: stroke; font: 44px Impact, "Arial Black", sans-serif; text-anchor: middle; }
+@keyframes fx-boom {
+  from { scale: 0; rotate: -20deg; }
+  25% { scale: 1.1; }
+  70% { scale: 1; opacity: 1; }
+  to { scale: 1; opacity: 0; }
+}
+
+.exploding { overflow: hidden; }
+.window.blown { position: relative; z-index: 95; animation: blown 1s cubic-bezier(0.3, 0, 0.8, 0.6) forwards; }
+@keyframes blown {
+  to { transform: translate(var(--fly-x), var(--fly-y)) rotate(var(--fly-spin)); opacity: 0; }
+}
+
+.shake { animation: shake 0.45s steps(6); }
+@keyframes shake {
+  17% { transform: translate(-7px, 4px); }
+  33% { transform: translate(6px, -5px); }
+  50% { transform: translate(-5px, -3px); }
+  67% { transform: translate(5px, 4px); }
+  83% { transform: translate(-3px, 2px); }
+}
+
 /* Motion off: by the button at the top, or by the system setting unless the button turned it back on. */
 .no-motion *, .no-motion *::before, .no-motion *::after { animation: none !important; transition: none !important; }
 .no-motion .marquee span { padding-left: 0; white-space: normal; }
