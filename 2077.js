@@ -22,8 +22,10 @@
     applyMotion();
   });
 
-  // The counter belongs to the 90s page, so this page only reads it and never adds a visit.
-  const COUNTER_URL = "https://5xswyi5y55xzsyrqgizq2sp3qy0ymcwz.lambda-url.eu-north-1.on.aws/?id=90s";
+  // This page has its own counter, apart from the 90s one: same Lambda, its own row in DynamoDB.
+  // Each browser is counted once; later visits only read the number.
+  const COUNTER_URL = "https://5xswyi5y55xzsyrqgizq2sp3qy0ymcwz.lambda-url.eu-north-1.on.aws/?id=2077";
+  const COUNTED_KEY = "hz2077-counted";
   const counter = document.getElementById("counter");
   const show = (text) => {
     counter.setAttribute("aria-label", /^\d+$/.test(text) ? String(Number(text)) : text.replace(/[^\w]/g, "") || "…");
@@ -34,9 +36,18 @@
       .join("");
   };
   show("???????");
-  fetch(COUNTER_URL)
+
+  let counted = false;
+  try { counted = localStorage.getItem(COUNTED_KEY) === "1"; } catch {}
+
+  fetch(COUNTER_URL, { method: counted ? "GET" : "POST" })
     .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-    .then(({ count }) => show(String(count)))
+    .then(({ count }) => {
+      show(String(count));
+      if (!counted) {
+        try { localStorage.setItem(COUNTED_KEY, "1"); } catch {}
+      }
+    })
     .catch(() => show("OFFLINE"));
 
   // Closable shards: × hides one, the QUICKHACKS menu brings it back, and closing them all shows a message.
