@@ -871,6 +871,33 @@
   document.getElementById("cheats-open").addEventListener("click", () => cheats.showModal());
   document.getElementById("cheats-ok").addEventListener("click", () => cheats.close());
 
+  // The cookbook shows one page at a time, the contents or a single recipe, like a Windows Help file.
+  const cookbook = document.getElementById("cookbook");
+  const bookPages = [...cookbook.querySelectorAll(".book-page")];
+  const bookBack = document.getElementById("book-back");
+  const bookPrev = document.getElementById("book-prev");
+  const bookNext = document.getElementById("book-next");
+  let bookPage = 0;
+  const turnTo = (page) => {
+    bookPage = page;
+    bookPages.forEach((p, i) => { p.hidden = i !== page; });
+    bookBack.disabled = bookPrev.disabled = page === 0;
+    bookNext.disabled = page === bookPages.length - 1;
+    cookbook.querySelector(".notepad").scrollTop = 0;
+    // The button that was just clicked may be gone with its page, so focus moves to the new one.
+    bookPages[page].querySelector("h3").focus();
+  };
+  document.querySelectorAll("[data-page]").forEach((link) => {
+    link.addEventListener("click", () => {
+      if (!cookbook.open) cookbook.showModal();
+      turnTo(bookPages.findIndex((p) => p.id === link.dataset.page));
+    });
+  });
+  bookBack.addEventListener("click", () => turnTo(0));
+  bookPrev.addEventListener("click", () => turnTo(bookPage - 1));
+  bookNext.addEventListener("click", () => turnTo(bookPage + 1));
+  document.getElementById("cookbook-ok").addEventListener("click", () => cookbook.close());
+
   document.querySelectorAll(".year").forEach((el) => { el.textContent = new Date().getFullYear(); });
 
   const year = document.querySelector("button.year");
@@ -1247,6 +1274,7 @@
     ["FACTS.TXT", "#facts"],
     ["HIRE_ME.EXE", "#hire-me"],
     ["CHEATS.TXT", "#cheats .notepad"],
+    ["COOKBOOK.HLP", "#cookbook .notepad"],
   ].map(([name, selector]) => ({ name, source: document.querySelector(selector) }));
   // The one file that isn't part of this page: running it leaves for the 2077 version.
   FILES.push({ name: "2077.EXE", href: "/2077/", size: 2077, date: "01-01-77" });
@@ -1260,7 +1288,7 @@
     if (node.matches("dt, th")) return `\n${inner}: `;
     if (node.matches("li")) return `\n- ${inner}`;
     if (node.matches("tr")) return `\n${inner}`;
-    return node.matches("p, h3, dl, ul, ol, table") ? `\n${inner}\n` : inner;
+    return node.matches("p, h3, h4, dl, ul, ol, table") ? `\n${inner}\n` : inner;
   };
   const fileText = (file) => (file.source ? toText(file.source).replace(/ *\n */g, "\n").replace(/\n{3,}/g, "\n\n").trim() : dosText.binary);
 

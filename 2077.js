@@ -132,6 +132,33 @@
   document.getElementById("cheats-open").addEventListener("click", () => cheats.showModal());
   document.getElementById("cheats-ok").addEventListener("click", () => cheats.close());
 
+  // The cookbook shows one page at a time: the contents or a single recipe.
+  const cookbook = document.getElementById("cookbook");
+  const bookPages = [...cookbook.querySelectorAll(".book-page")];
+  const bookBack = document.getElementById("book-back");
+  const bookPrev = document.getElementById("book-prev");
+  const bookNext = document.getElementById("book-next");
+  let bookPage = 0;
+  const turnTo = (page) => {
+    bookPage = page;
+    bookPages.forEach((p, i) => { p.hidden = i !== page; });
+    bookBack.disabled = bookPrev.disabled = page === 0;
+    bookNext.disabled = page === bookPages.length - 1;
+    cookbook.querySelector(".notepad").scrollTop = 0;
+    // The button that was just clicked may be gone with its page, so focus moves to the new one.
+    bookPages[page].querySelector("h3").focus();
+  };
+  document.querySelectorAll("[data-page]").forEach((link) => {
+    link.addEventListener("click", () => {
+      if (!cookbook.open) cookbook.showModal();
+      turnTo(bookPages.findIndex((p) => p.id === link.dataset.page));
+    });
+  });
+  bookBack.addEventListener("click", () => turnTo(0));
+  bookPrev.addEventListener("click", () => turnTo(bookPage - 1));
+  bookNext.addEventListener("click", () => turnTo(bookPage + 1));
+  document.getElementById("cookbook-ok").addEventListener("click", () => cookbook.close());
+
   document.querySelectorAll(".year").forEach((el) => { el.textContent = new Date().getFullYear(); });
 
   const year = document.querySelector("button.year");
