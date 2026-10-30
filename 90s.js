@@ -315,6 +315,8 @@
     showJukebox(0, false);
   };
   const playMusic = () => {
+    // An iPhone on silent mutes Web Audio, unless the page says it's playing music on purpose. Safari 16.4 and up.
+    if (navigator.audioSession) navigator.audioSession.type = "playback";
     audio = new AudioContext();
     const startAt = audio.currentTime + 0.1;
     masterVolume = new GainNode(audio, { gain: volumeGain() });
@@ -632,8 +634,10 @@
   // The ICQ status isn't live: it's a usual week read off the Kyiv clock.
   // Each day is a list of [starts at, status], and a status lasts until the next one starts.
   // "fun" is free time: every page load picks one activity and one title for it, and so does changing the clock.
+  // Meals roll a dish from the cookbook the same way: soup for lunch, pork or lasagna for dinner, and he eats what he cooked.
+  // Pancakes never roll: they're "breakfast", and breakfast is always pancakes.
   // Friday night stays gaming on purpose, whatever the dice say.
-  const WORK_DAY = [["00:00", "sleeping"], ["08:00", "yoga"], ["08:30", "eating"], ["09:00", "coding"], ["13:00", "eating"], ["14:00", "coding"], ["18:00", "cooking"], ["19:00", "eating"]];
+  const WORK_DAY = [["00:00", "sleeping"], ["08:00", "yoga"], ["08:30", "breakfast"], ["09:00", "coding"], ["11:00", "coffee"], ["11:10", "coding"], ["13:00", "lunch"], ["14:00", "coding"], ["16:00", "coffee"], ["16:10", "coding"], ["18:00", "cookDinner"], ["19:00", "dinner"]];
   const WEEKNIGHT = [...WORK_DAY, ["20:00", "fun"], ["23:30", "sleeping"]];
   const ICQ_WEEK = {
     Mon: WEEKNIGHT,
@@ -641,26 +645,26 @@
     Wed: WEEKNIGHT,
     Thu: WEEKNIGHT,
     Fri: [...WORK_DAY, ["20:00", "gaming"]],
-    Sat: [["00:00", "gaming"], ["01:00", "sleeping"], ["09:00", "yoga"], ["09:30", "eating"], ["10:00", "chores"], ["12:30", "cooking"], ["13:30", "eating"], ["14:30", "fun"], ["18:00", "cooking"], ["19:00", "eating"], ["20:00", "fun"], ["23:30", "sleeping"]],
-    Sun: [["00:00", "sleeping"], ["09:30", "yoga"], ["10:00", "eating"], ["10:30", "fun"], ["13:00", "cooking"], ["14:00", "eating"], ["15:00", "fun"], ["19:00", "eating"], ["20:00", "fun"], ["23:30", "sleeping"]],
+    Sat: [["00:00", "gaming"], ["01:00", "sleeping"], ["09:00", "yoga"], ["09:30", "breakfast"], ["10:00", "chores"], ["12:30", "cookLunch"], ["13:30", "lunch"], ["14:30", "fun"], ["18:00", "cookDinner"], ["19:00", "dinner"], ["20:00", "fun"], ["23:30", "sleeping"]],
+    Sun: [["00:00", "sleeping"], ["09:30", "yoga"], ["10:00", "breakfast"], ["10:30", "fun"], ["13:00", "cookLunch"], ["14:00", "lunch"], ["15:00", "fun"], ["19:00", "dinner"], ["20:00", "fun"], ["23:30", "sleeping"]],
   };
   // ICQ's own colors: green for online, orange for away, red when there's nobody home.
-  const ICQ_STATES = { coding: "online", fun: "online", reading: "online", gaming: "online", anime: "online", yoga: "away", eating: "away", cooking: "away", chores: "away", sleeping: "sleeping" };
+  const ICQ_STATES = { coding: "online", fun: "online", reading: "online", gaming: "online", anime: "online", yoga: "away", breakfast: "away", lunch: "away", dinner: "away", coffee: "away", cookLunch: "away", cookDinner: "away", chores: "away", sleeping: "sleeping" };
   const ICQ_TEXT = {
     en: {
       sleeping: ["Hlib is Sleeping", "scheduled downtime"],
       yoga: ["Hlib is doing Yoga", "incense included"],
-      eating: ["Hlib is Eating", "nom nom nom"],
+      breakfast: ["Hlib is flipping Pancakes", "the first one's a sacrifice"],
+      coffee: ["Hlib is on a Coffee Break", "black as midnight"],
       coding: ["Hlib is Coding", "C# RULEZ"],
-      cooking: ["Hlib is Cooking", "fried pork again?"],
       chores: ["Hlib is doing House Chores", "send help"],
     },
     uk: {
       sleeping: ["Гліб спить", "хррр..."],
       yoga: ["Гліб на йозі", "з пахощами"],
-      eating: ["Гліб їсть", "ням-ням-ням"],
+      breakfast: ["Гліб смажить панкейки", "перший млинець нанівець"],
+      coffee: ["Гліб на кава-брейку", "чорна, як північ"],
       coding: ["Гліб кодить", "C# РУЛИТЬ"],
-      cooking: ["Гліб готує", "знову смажена свинина?"],
       chores: ["Гліб прибирає вдома", "рятуйте"],
     },
   };
@@ -739,24 +743,83 @@
       ]],
     },
   };
+  // Kept apart from ICQ_FUN so that free time never rolls a meal. Every recipe in the cookbook but pancakes.
+  const ICQ_MEALS = {
+    en: {
+      cooking: "Hlib is cooking",
+      eating: ["Hlib is eating", "nom nom nom"],
+      lunch: [
+        ["Kharcho", "even better tomorrow"],
+        ["Minestrone", "more parmesan!!!"],
+      ],
+      dinner: [
+        ["Fried Pork", "what, again?"],
+        ["Lasagna", "a two-day project"],
+      ],
+    },
+    uk: {
+      cooking: "Гліб готує",
+      eating: ["Гліб їсть", "ням-ням-ням"],
+      lunch: [
+        ["харчо", "завтра буде ще смачніше"],
+        ["мінестроне", "більше пармезану!!!"],
+      ],
+      dinner: [
+        ["смажену свинину", "що, знову?"],
+        ["лазанью", "проєкт на два дні"],
+      ],
+    },
+  };
   const pickOne = (list) => list[Math.floor(Math.random() * list.length)];
   const icqText = { ...(ICQ_TEXT[document.documentElement.lang] ?? ICQ_TEXT.en) };
+  let icqFun;
   const rollFun = () => {
     Object.entries(ICQ_FUN[document.documentElement.lang] ?? ICQ_FUN.en).forEach(([activity, [doing, titles]]) => {
       const [title, mood] = pickOne(titles);
       icqText[activity] = [`${doing} ${title}`, mood];
     });
-    icqText.fun = icqText[pickOne(Object.keys(ICQ_FUN.en))];
+    icqFun = pickOne(Object.keys(ICQ_FUN.en));
+    icqText.fun = icqText[icqFun];
+    const { cooking, eating: [eating, eatingMood], lunch, dinner } = ICQ_MEALS[document.documentElement.lang] ?? ICQ_MEALS.en;
+    const [soup, soupMood] = pickOne(lunch);
+    const [main, mainMood] = pickOne(dinner);
+    icqText.cookLunch = [`${cooking} ${soup}`, soupMood];
+    icqText.lunch = [`${eating} ${soup}`, eatingMood];
+    icqText.cookDinner = [`${cooking} ${main}`, mainMood];
+    icqText.dinner = [`${eating} ${main}`, eatingMood];
   };
   rollFun();
   const icq = document.getElementById("icq");
-  document.getElementById("icq-flower").innerHTML = Array.from({ length: 7 }, (_, i) => (
+  // The flower takes its color from the state. Whatever isn't listed in ICQ_ICONS gets the flower.
+  const ICQ_FLOWER = Array.from({ length: 7 }, (_, i) => (
     `<circle cx="12" cy="4.6" r="3.9" transform="rotate(${(i * 360) / 7} 12 12)"/>`
   )).join("") + '<circle class="icq-eye" cx="12" cy="12" r="3.4"/>';
+  const ICQ_POT = '<path fill="none" stroke-width="1.2" d="M8 5Q7 3.5 8 2T8 0M16 5Q15 3.5 16 2T16 0"/><path fill="none" stroke-width="2" d="M1 14H4M20 14H23"/><path fill="#d8d8d8" d="M4 11H20V19A3 3 0 0 1 17 22H7A3 3 0 0 1 4 19Z"/><path fill="#cc0000" d="M3 8.5H21V11H3Z"/><circle cx="12" cy="7" r="1.6" fill="#cc0000"/>';
+  const ICQ_PLATE = '<circle cx="12.5" cy="12" r="6.5" fill="#fff"/><circle cx="12.5" cy="12" r="3.8" fill="#ffdd00"/><path fill="none" stroke-width="1" d="M1 3V8Q1 10.5 3 10.5T5 8V3M3 3V8M3 10.5V21"/><path fill="#fff" d="M20.5 21V3Q23.5 7 23.5 13H20.5"/>';
+  const ICQ_ICONS = {
+    cookLunch: ICQ_POT,
+    cookDinner: ICQ_POT,
+    lunch: ICQ_PLATE,
+    dinner: ICQ_PLATE,
+    coffee: '<path fill="none" stroke-width="1.2" d="M8 7Q6.8 5.5 8 4T8 1M13 7Q11.8 5.5 13 4T13 1"/><path fill="none" stroke-width="2" d="M17 12H19A2.5 2.5 0 0 1 19 17.5H16"/><path fill="#fff" d="M4 9H18V17A5 5 0 0 1 13 22H9A5 5 0 0 1 4 17Z"/><path fill="#3a2110" d="M4 9H18V11.5H4Z"/>',
+    breakfast: '<path fill="#7a3b00" stroke="none" d="M9 7H15V10H13.6V12.5H12.2V10H9Z"/><rect x="2" y="17.5" width="20" height="4" rx="2" fill="#e8a33c"/><rect x="3" y="13.5" width="18" height="4" rx="2" fill="#f0b858"/><rect x="4" y="9.5" width="16" height="4" rx="2" fill="#e8a33c"/><rect x="9.5" y="7" width="5" height="2.5" fill="#ffdd00"/>',
+    gaming: '<path fill="#707070" d="M7 7H17A6 6 0 0 1 23 13V16A3.2 3.2 0 0 1 17.2 18L15 16H9L6.8 18A3.2 3.2 0 0 1 1 16V13A6 6 0 0 1 7 7Z"/><path fill="#fff" stroke="none" d="M6 9.5H8V11.5H10V13.5H8V15.5H6V13.5H4V11.5H6Z"/><circle cx="16" cy="13.8" r="1.5" fill="#ff2a2a"/><circle cx="19" cy="10.8" r="1.5" fill="#ffdd00"/>',
+    anime: '<path fill="none" stroke-width="1.2" d="M7 1L12 6.5L17 1"/><rect x="2" y="6.5" width="20" height="16" rx="2" fill="#505050"/><rect x="4" y="8.5" width="16" height="12" rx="1" fill="#ffb6d9"/><path fill="none" stroke-width="1.3" d="M6.5 14.5L8.5 12L10.5 14.5M13.5 14.5L15.5 12L17.5 14.5M10.5 17H13.5"/>',
+    yoga: '<path fill="none" stroke-width="2" stroke="#ffd2a8" d="M8.5 10L5 16.5M15.5 10L19 16.5"/><path fill="#909090" d="M8.5 8.8H15.5L17 16.5H7Z"/><circle cx="12" cy="4.6" r="3.2" fill="#ffd2a8"/><path fill="#3a2110" stroke="none" d="M8.8 4.8H10Q10.6 6 12 6T14 4.8H15.2Q15.6 9.6 12 9.8Q8.4 9.6 8.8 4.8Z"/><path fill="#1a1a1a" d="M2 19.5Q2 16.5 6 16.5H18Q22 16.5 22 19.5Q22 22 19 22H5Q2 22 2 19.5Z"/>',
+    chores: '<path fill="none" stroke="#8a5a2b" stroke-width="2.4" d="M21 2L12 12"/><path fill="#ffdd00" d="M10.5 11L14.5 15L9 22L2 20Q7 17 10.5 11Z"/><path fill="none" d="M10.5 14.5L6 20.5M12.5 15.5L8.5 21"/><path fill="#cc0000" d="M9.5 11.5L11.5 9.5L15.5 13.5L13.5 15.5Z"/>',
+    reading: '<path fill="#fff" d="M12 6C9 4 5 4 1.5 5V20C5 19 9 19 12 21C15 19 19 19 22.5 20V5C19 4 15 4 12 6Z"/><path fill="none" d="M12 6V21M4 8.5C6 8 8 8 10 9M4 12C6 11.5 8 11.5 10 12.5M20 8.5C18 8 16 8 14 9M20 12C18 11.5 16 11.5 14 12.5"/>',
+  };
+  const icqIcon = document.getElementById("icq-flower");
+  let shownIcon;
   const showIcq = (day, time) => {
     const [, status] = ICQ_WEEK[day].filter(([from]) => from <= time).pop();
     icq.dataset.state = ICQ_STATES[status];
     [document.getElementById("icq-text").textContent, document.getElementById("icq-mood").textContent] = icqText[status];
+    // This runs every second, so the icon is only redrawn when it changes.
+    const icon = ICQ_ICONS[status === "fun" ? icqFun : status] ?? ICQ_FLOWER;
+    if (icon === shownIcon) return;
+    shownIcon = icon;
+    icqIcon.innerHTML = icon;
   };
 
   // Kyiv midnight, like the clock next to it. The seconds stop with the other animations.
