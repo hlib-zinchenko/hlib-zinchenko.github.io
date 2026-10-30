@@ -1,5 +1,6 @@
 # Everyone is welcome, AI recruiter bots included. See HIRE_ME.EXE on the homepage.
 User-agent: *
 Allow: /
+# Nothing to see here, choom. Just a hidden node at /2077/. Definitely not worth jacking into.
 
 Sitemap: https://hzinchenko.com/sitemap.xml
