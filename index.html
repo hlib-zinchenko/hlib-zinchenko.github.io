@@ -39,6 +39,7 @@
     <p class="subtitle"><span aria-hidden="true">~*~</span> Senior .NET backend engineer from Kyiv, Ukraine <span aria-hidden="true">~*~</span></p>
 
     <p class="business">Business people: <a href="/business/">click here for the boring version</a></p>
+    <p class="sniffer" id="sniffer" hidden></p>
     </header>
 
     <hr class="rainbow">
@@ -80,6 +81,22 @@
           </div>
         </div>
         <p class="weather-fine"><span id="weather-updated"></span> Data: <a href="https://open-meteo.com/">Open-Meteo.com</a></p>
+      </aside>
+
+      <aside class="poll" id="poll" aria-labelledby="poll-title" hidden>
+        <b id="poll-title"><span aria-hidden="true">~</span> PoLL <span aria-hidden="true">~</span></b>
+        <form id="poll-form">
+          <fieldset>
+            <legend>Who's the best turtle?</legend>
+            <label><input type="radio" name="turtle" value="leo" required> Leonardo</label>
+            <label><input type="radio" name="turtle" value="donnie"> Donatello</label>
+            <label><input type="radio" name="turtle" value="raph"> Raphael</label>
+            <label><input type="radio" name="turtle" value="mikey"> Michelangelo</label>
+          </fieldset>
+          <div class="poll-btns"><button type="submit" class="win-btn" id="poll-vote">Vote!</button><button type="button" class="win-btn" id="poll-show">Results</button></div>
+        </form>
+        <div class="poll-results" id="poll-results" tabindex="-1" hidden></div>
+        <p class="poll-note" id="poll-note" role="status"></p>
       </aside>
       </div>
 

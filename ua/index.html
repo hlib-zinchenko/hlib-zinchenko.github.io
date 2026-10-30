@@ -40,6 +40,7 @@
     <p class="subtitle"><span aria-hidden="true">~*~</span> Senior .NET бекенд-інженер з Києва <span aria-hidden="true">~*~</span></p>
 
     <p class="business">Ти тут у справах? Тобі сюди: <a href="/business/" hreflang="en">нудна версія (англійською)</a></p>
+    <p class="sniffer" id="sniffer" hidden></p>
     </header>
 
     <hr class="rainbow">
@@ -81,6 +82,22 @@
           </div>
         </div>
         <p class="weather-fine"><span id="weather-updated"></span> Дані: <a href="https://open-meteo.com/">Open-Meteo.com</a></p>
+      </aside>
+
+      <aside class="poll" id="poll" aria-labelledby="poll-title" hidden>
+        <b id="poll-title"><span aria-hidden="true">~</span> ОпИтУвАнНя <span aria-hidden="true">~</span></b>
+        <form id="poll-form">
+          <fieldset>
+            <legend>Хто найкраща черепашка?</legend>
+            <label><input type="radio" name="turtle" value="leo" required> Леонардо</label>
+            <label><input type="radio" name="turtle" value="donnie"> Донателло</label>
+            <label><input type="radio" name="turtle" value="raph"> Рафаель</label>
+            <label><input type="radio" name="turtle" value="mikey"> Мікеланджело</label>
+          </fieldset>
+          <div class="poll-btns"><button type="submit" class="win-btn" id="poll-vote">Голосувати!</button><button type="button" class="win-btn" id="poll-show">Результати</button></div>
+        </form>
+        <div class="poll-results" id="poll-results" tabindex="-1" hidden></div>
+        <p class="poll-note" id="poll-note" role="status"></p>
       </aside>
       </div>
 

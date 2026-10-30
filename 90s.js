@@ -161,6 +161,99 @@
       });
     });
 
+  // "Who's the best turtle?" The votes sit in the same Lambda and table as the counter, which keep
+  // nothing about the voter. Each browser votes once, and its vote is remembered only here.
+  const VOTE_KEY = "hz90s-vote";
+  const POLL_TEXT = {
+    en: { total: (votes) => `Total votes: ${votes}`, offline: "No carrier =(" },
+    uk: { total: (votes) => `Усього голосів: ${votes}`, offline: "No carrier =(" },
+  };
+  const pollText = POLL_TEXT[document.documentElement.lang] ?? POLL_TEXT.en;
+  // Each turtle's bar is the color of its mask.
+  const TURTLE_COLORS = { leo: "#0000cc", donnie: "#6600cc", raph: "#cc0000", mikey: "#d14800" };
+  const poll = document.getElementById("poll");
+  const pollForm = document.getElementById("poll-form");
+  const pollResults = document.getElementById("poll-results");
+  const pollNote = document.getElementById("poll-note");
+  const pollVote = document.getElementById("poll-vote");
+  const turtles = [...pollForm.elements.turtle].map((radio) => ({ id: radio.value, name: radio.parentElement.textContent.trim() }));
+  let myVote = null;
+  try { myVote = localStorage.getItem(VOTE_KEY); } catch {}
+
+  const showResults = (votes) => {
+    const total = turtles.reduce((sum, { id }) => sum + votes[id], 0);
+    const rows = turtles.map(({ id, name }) => {
+      const share = total ? Math.round((votes[id] / total) * 100) : 0;
+      const mine = id === myVote ? ' <span class="hot">♥</span>' : "";
+      return `<p>${name}${mine}<br><small>${votes[id]} (${share}%)</small><span class="poll-track"><span class="poll-bar" style="width:${share}%;background:${TURTLE_COLORS[id]}"></span></span></p>`;
+    });
+    pollResults.innerHTML = `${rows.join("")}<p class="poll-total">${pollText.total(total)}</p>`;
+    pollResults.hidden = false;
+    pollNote.textContent = "";
+  };
+
+  const askPoll = (method, query = "") => fetch(`${API_URL}?id=poll${query}`, { method })
+    .then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
+  const pollOffline = () => { pollNote.textContent = pollText.offline; };
+  const loadResults = () => askPoll("GET").then(showResults).catch(pollOffline);
+
+  pollForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const vote = pollForm.elements.turtle.value;
+    pollVote.disabled = true; // A double click must not vote twice.
+    askPoll("POST", `&vote=${vote}`)
+      .then((votes) => {
+        myVote = vote;
+        try { localStorage.setItem(VOTE_KEY, vote); } catch {}
+        showResults(votes);
+        pollForm.hidden = true;
+        // The focused button just vanished, so keyboard focus moves to what took its place.
+        pollResults.focus({ preventScroll: true });
+      })
+      .catch(pollOffline)
+      .finally(() => { pollVote.disabled = false; });
+  });
+  document.getElementById("poll-show").addEventListener("click", loadResults);
+
+  if (myVote) {
+    pollForm.hidden = true;
+    loadResults();
+  }
+  poll.hidden = false;
+
+  // "Best viewed in Netscape 4.0": reads the browser's own name and sends it nowhere.
+  // The order matters: Edge and Opera also say Chrome, and Chrome also says Safari.
+  const BROWSERS = [
+    [/Edg(e|A|iOS)?\//, "Edge"],
+    [/OPR\/|OPiOS\//, "Opera"],
+    [/Vivaldi\//, "Vivaldi"],
+    [/SamsungBrowser\//, "Samsung Internet"],
+    [/Firefox\/|FxiOS\//, "Firefox"],
+    [/Chrome\/|CriOS\//, "Chrome"],
+    [/Safari\//, "Safari"],
+  ];
+  const SNIFFER_TEXT = {
+    en: {
+      future: (name) => `You're on ${name}, a browser from the FUTURE. Best viewed in Netscape 4.0.`,
+      unknown: "You're on a browser from the FUTURE. Best viewed in Netscape 4.0.",
+      robot: "You're a ROBOT. Greetings, fellow robot! Your note is at C:\\> HIRE_ME.EXE.",
+    },
+    uk: {
+      future: (name) => `Ти в ${name}, браузері з МАЙБУТНЬОГО. Найкраще дивитися в Netscape 4.0.`,
+      unknown: "Ти в браузері з МАЙБУТНЬОГО. Найкраще дивитися в Netscape 4.0.",
+      robot: "Ти РОБОТ. Вітаю, колего-роботе! Твоя записка в C:\\> HIRE_ME.EXE.",
+    },
+  };
+  const snifferText = SNIFFER_TEXT[document.documentElement.lang] ?? SNIFFER_TEXT.en;
+  const sniff = (agent, isRobot) => {
+    if (isRobot || /bot|crawl|spider|headless/i.test(agent)) return snifferText.robot;
+    const browser = BROWSERS.find(([pattern]) => pattern.test(agent));
+    return browser ? snifferText.future(browser[1]) : snifferText.unknown;
+  };
+  const sniffer = document.getElementById("sniffer");
+  sniffer.textContent = sniff(navigator.userAgent, navigator.webdriver);
+  sniffer.hidden = false;
+
   // Closable windows: × hides a window, the MeNu brings it back, and closing them all shows a dialog.
   // Each time everything gets closed the dialog gets grumpier, until the last one only offers a reload.
   const windows = [...document.querySelectorAll("section.window")];
