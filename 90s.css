@@ -362,14 +362,16 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
 .tasks button { flex: 0 1 150px; min-width: 76px; overflow: hidden; text-align: left; text-overflow: ellipsis; }
 
 .tray { flex: none; display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 8px 0 4px; border: 2px inset #fff; }
-.taskbar .tray button { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; background: none; border: 0; }
+.taskbar .tray button { display: grid; place-items: center; height: 24px; padding: 0; background: none; border: 0; }
+#volume-button { width: 24px; }
+#clock:hover { text-decoration: underline; }
 .taskbar .tray button:focus-visible { outline: 1px dotted #000; }
 .tray svg { display: block; width: 20px; height: 16px; }
 .volume-x { display: none; }
 .muted .volume-x { display: inline; }
 .muted .volume-waves { display: none; }
 
-.volume-panel {
+.volume-panel, .time-panel {
   position: fixed;
   right: 3px;
   bottom: var(--taskbar-height);
@@ -394,6 +396,11 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
   writing-mode: vertical-lr;
 }
 .volume-panel label { display: block; cursor: pointer; }
+
+.time-panel { width: 190px; }
+.time-panel label { display: block; margin-top: 6px; text-align: left; }
+.time-panel select, .time-panel input { display: block; width: 100%; margin-top: 2px; padding: 3px; background: #fff; border: 2px inset #fff; color: #000; font: inherit; }
+.time-panel .win-btn { width: 100%; min-width: 0; margin-top: 8px; padding: 3px 6px; font-size: 12px; }
 
 .start-menu {
   position: fixed;

@@ -545,6 +545,7 @@
   });
   startButton.addEventListener("click", () => {
     toggleVolumePanel(false);
+    toggleTimePanel(false);
     toggleStartMenu(startMenu.hidden);
     if (!startMenu.hidden) startMenu.querySelector("a").focus();
   });
@@ -581,6 +582,7 @@
   volumeMute.addEventListener("change", applyVolume);
   volumeButton.addEventListener("click", () => {
     toggleStartMenu(false);
+    toggleTimePanel(false);
     toggleVolumePanel(volumePanel.hidden);
     if (!volumePanel.hidden) volumeSlider.focus();
   });
@@ -589,6 +591,7 @@
   document.addEventListener("click", (e) => {
     if (!startMenu.hidden && !startMenu.contains(e.target) && !startButton.contains(e.target)) toggleStartMenu(false);
     if (!volumePanel.hidden && !volumePanel.contains(e.target) && !volumeButton.contains(e.target)) toggleVolumePanel(false);
+    if (!timePanel.hidden && !timePanel.contains(e.target) && !clock.contains(e.target)) toggleTimePanel(false);
   });
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
@@ -598,6 +601,9 @@
     } else if (!volumePanel.hidden) {
       toggleVolumePanel(false);
       volumeButton.focus();
+    } else if (!timePanel.hidden) {
+      toggleTimePanel(false);
+      clock.focus();
     } else {
       unmaximize();
     }
@@ -621,7 +627,7 @@
 
   // The ICQ status isn't live: it's a usual week read off the Kyiv clock.
   // Each day is a list of [starts at, status], and a status lasts until the next one starts.
-  // "fun" is free time: every page load picks one activity and one title for it, so a reload can change it.
+  // "fun" is free time: every page load picks one activity and one title for it, and so does changing the clock.
   // Friday night stays gaming on purpose, whatever the dice say.
   const WORK_DAY = [["00:00", "sleeping"], ["08:00", "yoga"], ["08:30", "eating"], ["09:00", "coding"], ["13:00", "eating"], ["14:00", "coding"], ["18:00", "cooking"], ["19:00", "eating"]];
   const WEEKNIGHT = [...WORK_DAY, ["20:00", "fun"]];
@@ -677,6 +683,9 @@
         ["Civilization V", "one more turn"],
         ["Cyberpunk 2077", "wake up, Samurai"],
         ["Hades II", "back to the Crossroads"],
+        ["S.T.A.L.K.E.R. 2", "throwing bolts"],
+        ["Half-Life 2", "rise and shine, Mr. Freeman"],
+        ["Streets of Rage", "street chicken = full health"],
       ]],
       reading: ["Hlib is reading", [
         ["The Witcher", "evil is evil"],
@@ -710,6 +719,9 @@
         ["Civilization V", "ще один хід"],
         ["Cyberpunk 2077", "прокидайся, Самураю"],
         ["Hades II", "знову на Роздоріжжі"],
+        ["S.T.A.L.K.E.R. 2", "кидає болти"],
+        ["Half-Life 2", "час прокидатися, містере Фрімен"],
+        ["Streets of Rage", "курка з вулиці — повне здоров'я"],
       ]],
       reading: ["Гліб читає", [
         ["«Відьмака»", "зло є зло"],
@@ -725,11 +737,14 @@
   };
   const pickOne = (list) => list[Math.floor(Math.random() * list.length)];
   const icqText = { ...(ICQ_TEXT[document.documentElement.lang] ?? ICQ_TEXT.en) };
-  Object.entries(ICQ_FUN[document.documentElement.lang] ?? ICQ_FUN.en).forEach(([activity, [doing, titles]]) => {
-    const [title, mood] = pickOne(titles);
-    icqText[activity] = [`${doing} ${title}`, mood];
-  });
-  icqText.fun = icqText[pickOne(Object.keys(ICQ_FUN.en))];
+  const rollFun = () => {
+    Object.entries(ICQ_FUN[document.documentElement.lang] ?? ICQ_FUN.en).forEach(([activity, [doing, titles]]) => {
+      const [title, mood] = pickOne(titles);
+      icqText[activity] = [`${doing} ${title}`, mood];
+    });
+    icqText.fun = icqText[pickOne(Object.keys(ICQ_FUN.en))];
+  };
+  rollFun();
   const icq = document.getElementById("icq");
   document.getElementById("icq-flower").innerHTML = Array.from({ length: 7 }, (_, i) => (
     `<circle cx="12" cy="4.6" r="3.9" transform="rotate(${(i * 360) / 7} 12 12)"/>`
@@ -763,15 +778,59 @@
     kyivDay = dayFormat("Europe/Kiev");
   }
   const clock = document.getElementById("clock");
+  // How far the visitor has moved the clock. The countdown always runs on real time.
+  let clockOffset = 0;
+  const clockNow = () => new Date(Date.now() + clockOffset);
   const tick = () => {
-    const now = new Date();
+    const now = clockNow();
     const time = kyivClock.format(now);
     clock.textContent = time;
     showIcq(kyivDay.format(now), time);
-    showCountdown(now);
+    showCountdown(new Date());
   };
   tick();
   setInterval(tick, 1000);
+
+  // Click the clock to set another day and time, like Date/Time Properties in Windows.
+  // The ICQ status follows it, and a reload goes back to the real time.
+  const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const minuteOfWeek = (day, time) => WEEK.indexOf(day) * 1440 + Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5));
+  const timePanel = document.getElementById("time-panel");
+  const timeDay = document.getElementById("time-day");
+  const timeInput = document.getElementById("time-input");
+  const toggleTimePanel = (open) => {
+    timePanel.hidden = !open;
+    clock.setAttribute("aria-expanded", open);
+  };
+  const applyClock = () => {
+    rollFun();
+    tick();
+  };
+  const setClock = () => {
+    if (!timeInput.value) return;
+    const now = clockNow();
+    const minutes = minuteOfWeek(timeDay.value, timeInput.value) - minuteOfWeek(kyivDay.format(now), kyivClock.format(now));
+    clockOffset += minutes * 60000;
+    applyClock();
+  };
+  timeDay.addEventListener("change", setClock);
+  timeInput.addEventListener("change", setClock);
+  clock.addEventListener("click", () => {
+    toggleStartMenu(false);
+    toggleVolumePanel(false);
+    toggleTimePanel(timePanel.hidden);
+    if (timePanel.hidden) return;
+    const now = clockNow();
+    timeDay.value = kyivDay.format(now);
+    timeInput.value = kyivClock.format(now);
+    timeDay.focus();
+  });
+  document.getElementById("time-reset").addEventListener("click", () => {
+    clockOffset = 0;
+    applyClock();
+    toggleTimePanel(false);
+    clock.focus();
+  });
   document.getElementById("taskbar").hidden = false;
   icq.hidden = false;
   document.getElementById("y2k77-badge").hidden = false;

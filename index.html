@@ -310,7 +310,6 @@
                   <dt>RUBBISHCAR</dt><dd>a garbage truck</dd>
                 </dl>
                 <p>(See? I didn't lie. I wrote these codes from memory, honest.)</p>
-                <p><b>P.S. They work on THIS page too!!!</b> Just type one anywhere. No keyboard? Use the C:\&gt; prompt at the bottom of the page.</p>
                 <p>
                   RUBBISHCAR has a story. My school friend and I were playing Vice City at my place. We only knew
                   NUTTERTOOLS and PANZER, but we had already figured out that cheats are just English words. So we grabbed
@@ -318,6 +317,7 @@
                   <i>rubbish</i>, let's try making a garbage truck." We typed RUBBISHCAR, and there it was. It was like magic.
                   We had cracked the code. We had touched the forbidden. We had found secret knowledge.
                 </p>
+                <p><b>P.S. They work on THIS page too!!!</b> Just type one anywhere. No keyboard? Use the C:\&gt; prompt at the bottom of the page.</p>
               </div>
               <div class="actions"><button type="button" id="cheats-ok">OK</button></div>
             </dialog>
@@ -417,13 +417,29 @@
     <div class="tasks" id="tasks" role="group" aria-label="Minimized windows"></div>
     <span class="tray">
       <button type="button" id="volume-button" aria-label="Volume" title="Volume" aria-expanded="false" aria-controls="volume-panel"><svg viewBox="0 0 20 16" aria-hidden="true"><path d="M1 5H5L10 1V15L5 11H1Z" fill="#ffdd00" stroke="#000"/><path class="volume-waves" d="M13 5Q15 8 13 11M15.5 3Q19 8 15.5 13" fill="none" stroke="#000" stroke-width="1.5"/><path class="volume-x" d="M12 4L19 12M19 4L12 12" stroke="#cc0000" stroke-width="2.5"/></svg></button>
-      <span id="clock" title="Kyiv time"></span>
+      <button type="button" id="clock" title="Kyiv time. Click to change it" aria-expanded="false" aria-controls="time-panel"></button>
     </span>
   </nav>
   <div class="volume-panel" id="volume-panel" role="group" aria-labelledby="volume-title" hidden>
     <b id="volume-title">Volume</b>
     <input type="range" id="volume-slider" min="0" max="100" step="5" value="70" aria-labelledby="volume-title">
     <label><input type="checkbox" id="volume-mute"> Mute</label>
+  </div>
+  <div class="time-panel" id="time-panel" role="group" aria-labelledby="time-title" hidden>
+    <b id="time-title">Date/Time</b>
+    <label>Day
+      <select id="time-day">
+        <option value="Mon">Monday</option>
+        <option value="Tue">Tuesday</option>
+        <option value="Wed">Wednesday</option>
+        <option value="Thu">Thursday</option>
+        <option value="Fri">Friday</option>
+        <option value="Sat">Saturday</option>
+        <option value="Sun">Sunday</option>
+      </select>
+    </label>
+    <label>Time <input type="time" id="time-input"></label>
+    <button type="button" class="win-btn" id="time-reset">Real time</button>
   </div>
   <nav class="start-menu" id="start-menu" aria-label="Start menu" hidden>
     <span class="start-stripe" aria-hidden="true">HLIB 94</span>
