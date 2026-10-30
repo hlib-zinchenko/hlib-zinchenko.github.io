@@ -7,7 +7,7 @@ Personal site, served by GitHub Pages from the root of `main`. Plain HTML and CS
 - `/business/` — the same facts, minus the fun
 - `img/` — photos, downscaled into 1998 digital-camera JPEGs
 - `_og/` — the social preview cards behind `/img/og-*.png`, with the command that renders them
-- `_infra/visitor-counter/` — the AWS Lambda behind the counter (Function URL + DynamoDB). Jekyll skips `_` folders, so it isn't published.
+- `_infra/visitor-counter/` — the AWS Lambda behind the counter (Function URL + DynamoDB) and the weather widget, which it fetches from Open-Meteo and caches so that visitors' browsers never contact a weather provider. Jekyll skips `_` folders, so it isn't published.
 
 Preview locally:
 

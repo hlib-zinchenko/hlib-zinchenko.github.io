@@ -45,6 +45,7 @@
     <hr class="rainbow">
 
     <div class="layout">
+      <div class="side">
       <nav class="sidebar" aria-label="Розділи">
         <b><span aria-hidden="true">~</span> МеНю <span aria-hidden="true">~</span></b>
         <a href="#about">» Про мене</a>
@@ -57,6 +58,30 @@
         <a href="#links">» Посилання</a>
         <a href="/business/" hreflang="en">» Вихід у 2026</a>
       </nav>
+
+      <aside class="visitors" aria-labelledby="visitors-title">
+        <b id="visitors-title"><span aria-hidden="true">~</span> ЛіЧиЛьНиК <span aria-hidden="true">~</span></b>
+        <p>Ти відвідувач номер</p>
+        <span class="digits" id="counter" role="img"></span>
+      </aside>
+
+      <aside class="weather" id="weather" aria-labelledby="weather-title" hidden>
+        <b id="weather-title"><span aria-hidden="true">~</span> ПоГоДа <span aria-hidden="true">~</span></b>
+        <div class="weather-cities">
+          <div class="city" data-city="kyiv">
+            <b>Київ</b> <small>тут живу!</small>
+            <div class="scene"><svg class="sky" viewBox="0 0 150 116" aria-hidden="true"></svg><span class="temp">??°C</span></div>
+            <p class="sky-text">Dialing up...</p>
+          </div>
+          <div class="city" data-city="kremenchuk">
+            <b>Кременчук</b> <small>моє рідне місто <span class="hot">♥</span></small>
+            <div class="scene"><svg class="sky" viewBox="0 0 150 116" aria-hidden="true"></svg><span class="temp">??°C</span></div>
+            <p class="sky-text">Dialing up...</p>
+          </div>
+        </div>
+        <p class="weather-fine"><span id="weather-updated"></span> Дані: <a href="https://open-meteo.com/">Open-Meteo.com</a></p>
+      </aside>
+      </div>
 
       <main id="main" tabindex="-1">
         <section class="window" id="about">
@@ -261,7 +286,7 @@
     <hr class="rainbow">
 
     <nav id="links" class="webring" aria-label="Вебкільце">
-      <b><span aria-hidden="true">~</span> .NET-бекенд ВебКільце <span aria-hidden="true">~</span></b><br>
+      <b><span aria-hidden="true">~</span> ВебКільце <span aria-hidden="true">~</span></b><br>
       <a href="/business/" hreflang="en" title="Попередня епоха цього сайту">&lt;&lt; Назад</a> |
       <a href="https://github.com/hlib-zinchenko" id="random-site" title="Випадковий мій проєкт">Навмання</a> |
       <a href="https://linkedin.com/in/hzinchenko" title="Наступний крок: LinkedIn">Далі &gt;&gt;</a>
@@ -272,12 +297,6 @@
     </nav>
 
     <footer>
-    <div class="counter">
-      Ти відвідувач номер
-      <span class="digits" id="counter" role="img"></span>
-      <span class="blink">!!!</span>
-    </div>
-
     <div class="badges" aria-hidden="true">
       <div class="badge b1">Best viewed in<br>Netscape 4.0</div>
       <div class="badge b2">800 × 600<br>resolution</div>

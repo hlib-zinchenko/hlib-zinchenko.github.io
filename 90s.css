@@ -112,6 +112,109 @@ nav.sidebar a {
 nav.sidebar a:active { border-style: inset; }
 nav.sidebar a:hover { background: #000080; color: #fff; }
 
+.side { display: grid; gap: 14px; min-width: 0; }
+
+/* The panels under the MeNu: the visitor counter, then the weather.
+   The weather pictures are drawn in 90s.js, in the style of the cloud on the social cards. */
+.visitors, .weather {
+  background: #c0c0c0;
+  border: 3px outset #fff;
+  padding: 8px;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
+  font-size: 14px;
+}
+
+.visitors > b, .weather > b { display: block; text-align: center; margin-bottom: 6px; }
+.visitors { text-align: center; }
+.visitors p { margin: 0 0 4px; }
+
+.weather-cities { display: grid; gap: 10px; }
+.city > b { font: 19px Impact, "Arial Black", sans-serif; letter-spacing: 0.5px; color: #000080; }
+/* A fixed height, because the ♥ would push one city's picture lower than the other's. */
+.city small { display: block; height: 14px; font-size: 11px; line-height: 14px; white-space: nowrap; }
+
+.scene {
+  position: relative;
+  overflow: hidden;
+  margin-top: 3px;
+  border: 3px inset #808080;
+  background: linear-gradient(#7d9cc4, #d3e0ee);
+}
+
+.scene[data-sky="sun"] { background: linear-gradient(#0088ff, #9be7ff); }
+.scene[data-sky="partly"] { background: linear-gradient(#2a9dff, #c8f0ff); }
+.scene[data-sky="fog"] { background: linear-gradient(#8f9bab, #dfe5ec); }
+.scene[data-sky="rain"] { background: linear-gradient(#3a5f9e, #8fb5e0); }
+.scene[data-sky="snow"] { background: linear-gradient(#2f6fd0, #8fc4f5); }
+.scene[data-sky="storm"] { background: linear-gradient(#2a1a5e, #6a4fa3); }
+.scene[data-sky="offline"] { background: linear-gradient(#606060, #b0b0b0); }
+.scene.night { background: linear-gradient(#000033, #1f1f70); }
+
+.sky { display: block; width: 100%; height: 112px; }
+
+/* Lettering like "C#" on the card: Impact, tilted, with a white sticker edge so it reads on any picture. */
+.temp {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  translate: -50% -50%;
+  rotate: -8deg;
+  color: #555;
+  font: 30px Impact, "Arial Black", sans-serif;
+  white-space: nowrap;
+  text-shadow: -1.5px -1.5px 0 #fff, 1.5px -1.5px 0 #fff, -1.5px 1.5px 0 #fff, 1.5px 1.5px 0 #fff, 2.5px 2.5px 0 rgba(0, 0, 0, 0.55);
+}
+
+.sky-text {
+  margin: 4px 0 0;
+  text-align: center;
+  font: bold 13px "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive;
+  color: #000080;
+  rotate: -2deg;
+}
+
+/* The living part. Everything is stopped by .no-motion and prefers-reduced-motion at the end of this file,
+   and every shape sits in a sensible place with no animation at all. */
+.temp, .sky .bob { animation: bob 4s ease-in-out infinite; }
+.sky .rays { transform-box: fill-box; transform-origin: center; animation: spin 24s linear infinite; }
+.sky .star { animation: blink 1.6s steps(1) infinite; }
+.sky .drop { animation: fall 0.9s linear infinite; }
+.sky .flake { animation: flutter 2.6s linear infinite; }
+.sky .fog { animation: drift 7s ease-in-out infinite alternate; }
+.sky .bolt { animation: strike 3.2s steps(1) infinite; }
+.sky .flash { opacity: 0; animation: lightning 3.2s steps(1) infinite; }
+/* The second city runs out of step with the first. */
+.city + .city .temp, .city + .city .sky .bob { animation-delay: -1.7s; }
+.city + .city .sky .bolt, .city + .city .sky .flash { animation-delay: -1.2s; }
+
+@keyframes bob { 50% { transform: translateY(-3px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fall {
+  from { transform: translateY(-8px); opacity: 0; }
+  25% { opacity: 1; }
+  to { transform: translateY(14px); opacity: 0; }
+}
+@keyframes flutter {
+  from { transform: translate(0, -9px); opacity: 0; }
+  25% { transform: translate(3px, -3px); opacity: 1; }
+  50% { transform: translate(-3px, 3px); }
+  to { transform: translate(3px, 14px); opacity: 0; }
+}
+@keyframes drift { to { transform: translateX(16px); } }
+/* The bolt stays up and only blinks for a moment, right as the sky flashes. */
+@keyframes strike { 48%, 56% { visibility: hidden; } 50%, 58% { visibility: visible; } }
+@keyframes lightning { 50%, 58% { opacity: 0.55; } 54%, 62% { opacity: 0; } }
+
+.weather-fine { margin: 8px 0 0; font-size: 10px; text-align: center; }
+#weather-updated { display: block; }
+.weather-fine a { color: #0000ee; }
+.weather-fine a:visited { color: #551a8b; }
+.weather-fine a:hover { color: #ff0000; background: #ffff00; }
+
+/* On phones the panel spans the screen, so the two cities sit side by side. */
+@media (max-width: 640px) { .weather-cities { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
 .window {
   margin-bottom: 16px;
   background: #c0c0c0;
@@ -255,30 +358,29 @@ table.stack td { background: #ffffcc; }
 
 .timeline li { margin-bottom: 4px; }
 
-.counter {
-  text-align: center;
-  margin: 18px 0 8px;
-  color: #fff;
-}
-
-.digits {
-  display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  background: #000;
-  border: 3px inset #808080;
-  vertical-align: middle;
-}
+/* Fridge magnets: white tiles in the same black outline as the weather clip art, each one a bit crooked.
+   Seven of them have to fit the 148px inside a panel. */
+.digits { display: inline-flex; gap: 2px; vertical-align: middle; }
 
 .digits span {
-  width: 20px;
-  padding: 2px 0;
+  width: 19px;
+  padding: 1px 0;
   text-align: center;
-  background: #111;
-  color: #ff3333;
-  font: bold 20px "Courier New", monospace;
-  text-shadow: 0 0 6px #ff0000;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 4px;
+  font: bold 17px "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive;
+  rotate: -4deg;
 }
+
+.digits span:nth-child(even) { rotate: 3deg; }
+.digits span:nth-child(1) { color: #cc0000; }
+.digits span:nth-child(2) { color: #d14800; }
+.digits span:nth-child(3) { color: #007a00; }
+.digits span:nth-child(4) { color: #008080; }
+.digits span:nth-child(5) { color: #0000cc; }
+.digits span:nth-child(6) { color: #6600cc; }
+.digits span:nth-child(7) { color: #c000a0; }
 
 .badges {
   display: flex;
