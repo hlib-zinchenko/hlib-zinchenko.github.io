@@ -449,6 +449,14 @@ table.stack td { background: #ffffcc; }
 .robots p { margin: 6px 0 0; }
 .robots .robots-prompt { margin: 0 0 6px; text-align: left; color: #c0c0c0; }
 .robots .robots-human { color: #66ff66; font-size: 12px; }
+.robots a { color: #66ffff; }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 8px 0 0; text-align: left; }
+.facts dt { color: #c0c0c0; }
+.facts dd { margin: 0; }
+@media (max-width: 480px) {
+  .facts { grid-template-columns: 1fr; gap: 0; }
+  .facts dd { margin-bottom: 4px; }
+}
 
 .fine { position: relative; text-align: center; font-size: 12px; color: #aaaaff; }
 

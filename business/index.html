@@ -22,12 +22,13 @@
 <body>
   <main>
     <header class="intro">
-      <p class="eyebrow">Kyiv, Ukraine · Remote</p>
+      <p class="eyebrow">Kyiv, Ukraine · Remote · Hybrid/office&nbsp;by&nbsp;arrangement</p>
       <h1>Hlib Zinchenko</h1>
       <p class="role">Senior .NET backend engineer</p>
       <p class="lede">
-        10+ years of building web products from scratch to production, most recently as a backend lead.
-        I turn stalled or messy systems into maintainable modular monoliths, and I ship with AI daily.
+        10+ years of building web products from scratch to production, most recently as a backend lead and
+        startup co-founder. I turn stalled or messy systems into maintainable modular monoliths and work beyond
+        code: client CTOs, estimates, hiring. I ship with AI daily.
       </p>
       <nav class="links" aria-label="Profiles">
         <a href="https://linkedin.com/in/hzinchenko">LinkedIn</a>
@@ -44,7 +45,11 @@
           a .NET 10 modular monolith with web and admin apps, built with an agentic Claude Code workflow.
         </li>
         <li>
-          <strong>Part-time at Developex</strong>, building AI-powered self-service reporting for a B2B client.
+          <strong>Part-time at Developex</strong>: backend lead on an AI chat for a B2B client, using MCP,
+          plus the frontend.
+        </li>
+        <li>
+          <strong>Not actively looking.</strong>
         </li>
       </ul>
     </section>
@@ -53,12 +58,16 @@
       <h2 id="experience">Experience</h2>
       <ol class="timeline">
         <li>
+          <span class="when">2026 – now</span>
+          <div><strong>Stealth fintech</strong> · Co-founder &amp; lead engineer; part-time at Developex</div>
+        </li>
+        <li>
           <span class="when">2024 – 2026</span>
-          <div><strong>Developex</strong> · Senior .NET Developer, backend lead on a restaurant POS platform</div>
+          <div><strong>Developex</strong> · Senior .NET Developer, backend lead on a restaurant POS platform; earlier, sole backend developer of an employee survey platform built from scratch</div>
         </li>
         <li>
           <span class="when">2018 – 2023</span>
-          <div><strong>Dedicated Lab</strong> · Lead .NET Engineer at a studio serving US clients; hired and mentored the team</div>
+          <div><strong>Dedicated Lab</strong> · Lead .NET Engineer at a studio serving clients in the US, Canada, Australia and the UK. Joined as one of the first three people and grew with it to ~20; hired a few developers and mentored juniors. Built a claims review workflow with a full audit trail for a large US health-sharing organization (~50k members), including 3 weeks on-site in the US</div>
         </li>
         <li>
           <span class="when">2017 – 2018</span>
@@ -124,9 +133,9 @@
         <h3>Making AI-written code safe to ship</h3>
         <p>
           On the fintech product, agents write most of the code, so the rules live where an agent can't skip them:
-          module boundaries enforced by project references, banned APIs, and analyzers, including my own ModelRules
-          and TypeRules, that break the build. Architecture guides, a glossary and ADRs give the agent context, and I
-          review every change.
+          module boundaries enforced by project references, banned APIs and analyzers (my own TypeRules included) that
+          break the build, and my own ModelRules guarding the EF Core model. Architecture guides, a glossary and ADRs
+          give the agent context, and I review every change.
         </p>
         <p class="outcome">Backend, web and admin apps built by one engineer</p>
       </article>
@@ -134,7 +143,7 @@
 
     <section aria-labelledby="oss">
       <h2 id="oss">Open source</h2>
-      <p class="section-note">Libraries that grew out of conventions I kept enforcing by hand in code reviews.</p>
+      <p class="section-note">Libraries that grew out of real problems on production projects.</p>
 
       <article class="project">
         <h3><a href="https://github.com/hlib-zinchenko/Hlibz.EntityFrameworkCore.ModelRules">Hlibz.EntityFrameworkCore.ModelRules</a></h3>
@@ -194,11 +203,11 @@
     <section aria-labelledby="stack">
       <h2 id="stack">Stack</h2>
       <dl class="stack">
-        <dt>Architecture</dt><dd>DDD, CQRS, Clean Architecture, modular monoliths, event-driven, multi-tenancy</dd>
+        <dt>Architecture</dt><dd>DDD, CQRS, Clean Architecture, modular monoliths, REPR, event-driven, multi-tenancy</dd>
         <dt>Backend</dt><dd>C#, .NET, ASP.NET Core, EF Core, MassTransit, MediatR, FluentValidation, Hangfire, Quartz, SignalR, Serilog, Roslyn analyzers</dd>
-        <dt>Data &amp; cloud</dt><dd>PostgreSQL, MS SQL, MySQL, AWS (EC2, ECS, RDS, S3, SES, SNS, CloudWatch), Docker, GitHub Actions, GitLab CI, Azure DevOps</dd>
+        <dt>Data &amp; cloud</dt><dd>PostgreSQL, MS SQL, MySQL, AWS (EC2, ECS, RDS, S3, SES, SNS, CloudWatch), Docker, GitHub Actions, GitLab CI</dd>
         <dt>Testing</dt><dd>xUnit, Testcontainers, Moq</dd>
-        <dt>Integrations</dt><dd>Auth0, Stripe, Stream (delivery aggregators)</dd>
+        <dt>Integrations</dt><dd>Auth0, Stripe, Stream (delivery aggregators), Firebase, SendGrid, Plivo</dd>
         <dt>Frontend</dt><dd>TypeScript, Vue.js (logic side), React (web and admin apps shipped with Claude Code)</dd>
         <dt>AI</dt><dd>Claude Code agentic workflows, LLM-powered features</dd>
       </dl>
