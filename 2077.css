@@ -1,4 +1,10 @@
 /* Styles for the cyberpunk experiment: /2077/. */
+/* Served from this site so visitors' browsers never contact Google. Latin only: these fonts have no Cyrillic or Japanese. */
+@font-face { font-family: "Orbitron"; font-weight: 700 900; font-display: swap; src: url("/fonts/orbitron.woff2") format("woff2"); }
+@font-face { font-family: "Rajdhani"; font-weight: 500; font-display: swap; src: url("/fonts/rajdhani-500.woff2") format("woff2"); }
+@font-face { font-family: "Rajdhani"; font-weight: 700; font-display: swap; src: url("/fonts/rajdhani-700.woff2") format("woff2"); }
+@font-face { font-family: "Share Tech Mono"; font-weight: 400; font-display: swap; src: url("/fonts/share-tech-mono.woff2") format("woff2"); }
+
 :root {
   --bg: #06060c;
   --panel: #0c0e18;
