@@ -225,6 +225,124 @@
   }
   poll.hidden = false;
 
+  // The jukebox: Leontovych's "Shchedryk", all four choir parts as square waves. There's no audio file,
+  // the browser makes the sound, and nothing plays until the visitor presses Play.
+  // Each note is pitch:length in eighths, and R is a rest. The piece is pickup, body, first ending, body, coda.
+  // The last note of the coda is held twice as long, for the slowdown at the very end.
+  const BELLS = "Bb4:2 A4:1 Bb4:1 G4:2 ";
+  const LOW_BELLS = "Bb3:2 A3:1 Bb3:1 G3:2 ";
+  const G_BAR = "G4:2 G4:1 G4:1 G4:2 ";
+  const LOW_G_BAR = "G3:2 G3:1 G3:1 G3:2 ";
+  const SHCHEDRYK = [
+    {
+      volume: 0.05,
+      pickup: BELLS,
+      body: BELLS.repeat(15) + "D5:2 C5:1 D5:1 Bb4:2 ".repeat(4)
+        + "G5:2 G5:1 G5:1 F5:1 Eb5:1 D5:2 D5:1 D5:1 C5:1 Bb4:1 C5:2 C5:1 C5:1 D5:1 C5:1 G4:2 G4:1 G4:1 G4:2 "
+        + "D4:1 E4:1 F#4:1 G4:1 A4:1 Bb4:1 C5:1 D5:1 C5:2 Bb4:2 ".repeat(2) + BELLS.repeat(4),
+      firstEnding: BELLS,
+      coda: "G4:18 D5:2 C5:1 D5:1 G4:4",
+    },
+    {
+      volume: 0.03,
+      pickup: "R:6 ",
+      body: "R:18 " + "G4:6 F4:6 Eb4:6 D4:6 ".repeat(2) + G_BAR.repeat(4) + BELLS.repeat(4) + G_BAR.repeat(4)
+        + "D4:6 E4:2 F#4:2 G4:2 ".repeat(2) + "D4:6 C4:6 F4:6 Eb4:6 ",
+      firstEnding: "D4:4 R:2 ",
+      coda: "D4:18 Bb4:2 A4:1 Bb4:1 G4:4",
+    },
+    {
+      volume: 0.03,
+      pickup: "R:6 ",
+      body: "R:42 Eb4:6 Bb3:6 C4:6 G3:6 C4:2 C4:1 C4:1 C4:2 D4:2 D4:1 D4:1 D4:2 Eb4:2 Eb4:1 Eb4:1 Eb4:2 D4:2 D4:1 D4:1 D4:2 "
+        + "D4:6 E4:6 F4:2 Eb4:2 D4:2 G4:1 F4:1 Eb4:2 D4:2 "
+        + "D4:2 Eb4:1 Eb4:1 D4:1 C4:1 D4:2 D4:1 D4:1 D4:2 Eb4:2 Eb4:1 Eb4:1 F4:1 Eb4:1 D4:2 D4:1 D4:1 D4:2 "
+        + LOW_BELLS.repeat(4) + "G3:24 ",
+      firstEnding: "G3:4 R:2 ",
+      coda: LOW_BELLS.repeat(3) + "R:8",
+    },
+    {
+      volume: 0.03,
+      pickup: "R:6 ",
+      body: "R:66 Eb3:2 Eb3:1 Eb3:1 Eb3:2 G3:2 G3:1 G3:1 G3:2 C4:2 C4:1 C4:1 C4:2 G3:2 G3:1 G3:1 G3:2 "
+        + LOW_G_BAR.repeat(4) + LOW_BELLS.repeat(4) + "D3:22 Eb3:2 F3:6 Eb3:6 D3:6 C3:6 ",
+      firstEnding: "G2:4 R:2 ",
+      coda: "G2:18 R:8",
+    },
+  ];
+  const EIGHTH_SECONDS = 60 / 72 / 3; // Dotted quarter = 72, the tempo in the score.
+  const SEMITONES = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  const pitchToFrequency = (pitch) => {
+    const [, letter, accidental, octave] = pitch.match(/^([A-G])([b#]?)(\d)$/);
+    const fromA4 = SEMITONES[letter] + { b: -1, "#": 1, "": 0 }[accidental] + (octave - 4) * 12 - 9;
+    return 440 * 2 ** (fromA4 / 12);
+  };
+  const parseVoice = ({ pickup, body, firstEnding, coda }) => (pickup + body + firstEnding + body + coda).trim().split(" ").map((note) => {
+    const [pitch, eighths] = note.split(":");
+    return { frequency: pitch === "R" ? 0 : pitchToFrequency(pitch), seconds: eighths * EIGHTH_SECONDS };
+  });
+  const voices = SHCHEDRYK.map((voice) => ({ volume: voice.volume, notes: parseVoice(voice) }));
+  const MUSIC_SECONDS = voices[0].notes.reduce((sum, note) => sum + note.seconds, 0);
+
+  const JUKEBOX_TEXT = {
+    en: { play: "Play", stop: "Stop" },
+    uk: { play: "Грати", stop: "Стоп" },
+  };
+  const jukeboxText = JUKEBOX_TEXT[document.documentElement.lang] ?? JUKEBOX_TEXT.en;
+  const jukebox = document.getElementById("jukebox");
+  const jukeboxButton = document.getElementById("jukebox-play");
+  const jukeboxTime = document.getElementById("jukebox-time");
+  const asTime = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
+  const showJukebox = (elapsed, playing) => {
+    jukeboxTime.textContent = `${asTime(elapsed)} / ${asTime(MUSIC_SECONDS)}`;
+    jukeboxButton.innerHTML = playing
+      ? `<span aria-hidden="true">■</span> ${jukeboxText.stop}`
+      : `<span aria-hidden="true">▶</span> ${jukeboxText.play}`;
+    jukeboxButton.setAttribute("aria-pressed", playing);
+    jukebox.classList.toggle("playing", playing);
+  };
+
+  // Every note is scheduled up front, so the browser keeps time and a busy page can't make the music stumble.
+  const NOTE_GAP_SECONDS = 0.04; // Without it, repeated notes would melt into one.
+  let audio = null;
+  let masterVolume = null;
+  let jukeboxTimer;
+  const stopMusic = () => {
+    if (!audio) return;
+    clearInterval(jukeboxTimer);
+    audio.close();
+    audio = null;
+    showJukebox(0, false);
+  };
+  const playMusic = () => {
+    audio = new AudioContext();
+    const startAt = audio.currentTime + 0.1;
+    masterVolume = new GainNode(audio, { gain: volumeGain() });
+    masterVolume.connect(audio.destination);
+    voices.forEach(({ volume, notes }, i) => {
+      const oscillator = new OscillatorNode(audio, { type: "square" });
+      const gain = new GainNode(audio, { gain: 0 });
+      oscillator.connect(gain).connect(masterVolume);
+      let at = startAt;
+      notes.forEach(({ frequency, seconds }) => {
+        if (frequency) {
+          oscillator.frequency.setValueAtTime(frequency, at);
+          gain.gain.setValueAtTime(volume, at);
+          gain.gain.setTargetAtTime(0, at + seconds - NOTE_GAP_SECONDS, 0.008);
+        }
+        at += seconds;
+      });
+      oscillator.start(startAt);
+      oscillator.stop(at);
+      if (i === 0) oscillator.addEventListener("ended", stopMusic);
+    });
+    showJukebox(0, true);
+    jukeboxTimer = setInterval(() => showJukebox(Math.max(0, audio.currentTime - startAt), true), 250);
+  };
+  jukeboxButton.addEventListener("click", () => (audio ? stopMusic() : playMusic()));
+  showJukebox(0, false);
+  jukebox.hidden = !window.AudioContext;
+
   // "Best viewed in Netscape 4.0": reads the browser's own name and sends it nowhere.
   // The order matters: Edge and Opera also say Chrome, and Chrome also says Safari.
   const BROWSERS = [
@@ -258,9 +376,14 @@
   sniffer.textContent = sniff(navigator.userAgent, navigator.webdriver);
   sniffer.hidden = false;
 
-  // Closable windows: × hides a window, the MeNu brings it back, and closing them all shows a dialog.
+  // Windows: × hides a window, the MeNu brings it back, and closing them all shows a dialog.
+  // _ sends a window to the taskbar and □ fills the screen with it. A minimized window is hidden too,
+  // but it isn't closed, so it's kept in its own list and doesn't count towards "you closed everything".
   // Each time everything gets closed the dialog gets grumpier, until the last one only offers a reload.
   const windows = [...document.querySelectorAll("section.window")];
+  const minimized = new Set();
+  let maximized = null;
+  let scrollBeforeMaximize = 0;
   const allClosed = document.getElementById("all-closed");
   const restoreAll = document.getElementById("restore-all");
   // The dialog text lives here, so each page picks its language from <html lang>.
@@ -286,7 +409,7 @@
 
   const syncDialog = () => {
     const wasHidden = allClosed.hidden;
-    allClosed.hidden = windows.some((w) => !w.hidden);
+    allClosed.hidden = windows.some((w) => !w.hidden || minimized.has(w));
     if (!wasHidden || allClosed.hidden) return;
     timesClosed++;
     const { kind, bar, icon, text, button } = stage();
@@ -297,36 +420,366 @@
     restoreAll.textContent = button;
   };
 
-  windows.forEach((w, i) => {
-    const close = w.querySelector(".close");
-    const title = w.querySelector(".bar h2");
-    // "Close window: ABOUT_ME.TXT - Notepad", so a screen reader can tell the × buttons apart.
-    close.setAttribute("aria-label", `${close.getAttribute("aria-label")}: ${title.textContent}`);
-    title.tabIndex = -1;
-    close.addEventListener("click", () => {
-      w.hidden = true;
-      syncDialog();
-      // The button just vanished, so keyboard focus moves to the window that took its place.
-      // preventScroll: focusing something off-screen would make the page jump.
-      const next = windows.slice(i + 1).find((x) => !x.hidden) ?? windows.slice(0, i).reverse().find((x) => !x.hidden);
-      (allClosed.hidden ? next.querySelector(".bar h2") : restoreAll).focus({ preventScroll: true });
-    });
-  });
+  const WINDOW_TEXT = {
+    en: { restore: "Restore", restoreLabel: "Restore window" },
+    uk: { restore: "Відновити", restoreLabel: "Відновити вікно" },
+  };
+  const windowText = WINDOW_TEXT[document.documentElement.lang] ?? WINDOW_TEXT.en;
+  const windowTitle = (w) => w.querySelector(".bar h2").textContent;
 
-  document.querySelectorAll('nav.sidebar a[href^="#"]').forEach((link) => {
-    link.addEventListener("click", () => {
-      const target = document.getElementById(link.hash.slice(1));
-      if (target && target.hidden) {
-        target.hidden = false;
-        syncDialog();
-      }
-    });
-  });
+  const setMaxButton = (w, on) => {
+    const button = w.querySelector(".max");
+    button.textContent = on ? "❐" : "□";
+    button.title = on ? windowText.restore : button.dataset.title;
+    button.setAttribute("aria-label", `${on ? windowText.restoreLabel : button.dataset.label}: ${windowTitle(w)}`);
+  };
 
-  const reopenAll = () => {
-    windows.forEach((w) => { w.hidden = false; });
+  const unmaximize = () => {
+    if (!maximized) return;
+    maximized.classList.remove("maximized");
+    document.documentElement.classList.remove("has-maximized");
+    setMaxButton(maximized, false);
+    maximized = null;
+    scrollTo(0, scrollBeforeMaximize);
+  };
+
+  const maximize = (w) => {
+    unmaximize();
+    scrollBeforeMaximize = scrollY;
+    maximized = w;
+    w.classList.add("maximized");
+    document.documentElement.classList.add("has-maximized");
+    setMaxButton(w, true);
+  };
+
+  const tasks = document.getElementById("tasks");
+  const startButton = document.getElementById("start-button");
+
+  const openWindow = (w) => {
+    unmaximize();
+    w.hidden = false;
+    if (minimized.delete(w)) renderTasks();
     syncDialog();
   };
+
+  // Short names for the taskbar: "ABOUT_ME.TXT - Notepad" is ABOUT_ME.TXT, a folder is its last part.
+  const renderTasks = () => {
+    tasks.replaceChildren(...[...minimized].map((w) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = windowTitle(w).split(" - ")[0].split("\\").pop();
+      button.title = windowTitle(w);
+      button.addEventListener("click", () => {
+        openWindow(w);
+        w.scrollIntoView({ behavior: motion ? "smooth" : "auto", block: "start" });
+        w.querySelector(".bar h2").focus({ preventScroll: true });
+      });
+      return button;
+    }));
+  };
+
+  // The button just vanished, so keyboard focus moves to the window that took its place,
+  // or to the taskbar when all that's left is minimized.
+  // preventScroll: focusing something off-screen would make the page jump.
+  const focusAfterHiding = (i) => {
+    const next = windows.slice(i + 1).find((x) => !x.hidden) ?? windows.slice(0, i).reverse().find((x) => !x.hidden);
+    const target = allClosed.hidden ? next?.querySelector(".bar h2") ?? startButton : restoreAll;
+    target.focus({ preventScroll: true });
+  };
+
+  windows.forEach((w, i) => {
+    const close = w.querySelector(".close");
+    const minimize = w.querySelector(".min");
+    const max = w.querySelector(".max");
+    const title = w.querySelector(".bar h2");
+    // "Close window: ABOUT_ME.TXT - Notepad", so a screen reader can tell the buttons of each window apart.
+    [close, minimize].forEach((b) => b.setAttribute("aria-label", `${b.getAttribute("aria-label")}: ${title.textContent}`));
+    max.dataset.label = max.getAttribute("aria-label");
+    max.dataset.title = max.title;
+    setMaxButton(w, false);
+    title.tabIndex = -1;
+    close.addEventListener("click", () => {
+      if (w === maximized) unmaximize();
+      w.hidden = true;
+      syncDialog();
+      focusAfterHiding(i);
+    });
+    minimize.addEventListener("click", () => {
+      if (w === maximized) unmaximize();
+      w.hidden = true;
+      minimized.add(w);
+      renderTasks();
+      focusAfterHiding(i);
+    });
+    max.addEventListener("click", () => {
+      if (w === maximized) unmaximize();
+      else maximize(w);
+    });
+  });
+
+  const openSection = (link) => {
+    unmaximize();
+    const target = document.getElementById(link.hash.slice(1));
+    if (target && target.hidden) openWindow(target);
+  };
+  document.querySelectorAll('nav.sidebar a[href^="#"]').forEach((link) => {
+    link.addEventListener("click", () => openSection(link));
+  });
+
+  const reopenAll = () => windows.forEach(openWindow);
+
+  // The taskbar: Start on the left, then the minimized windows, then a clock in Kyiv time.
+  // The Start menu is the MeNu again, so it needs no text or translations of its own.
+  const startMenu = document.getElementById("start-menu");
+  const shutDownButton = document.getElementById("shut-down");
+  const toggleStartMenu = (open) => {
+    startMenu.hidden = !open;
+    startButton.setAttribute("aria-expanded", open);
+  };
+  [...document.querySelectorAll("nav.sidebar a")].forEach((link) => {
+    const item = link.cloneNode(true);
+    item.textContent = link.textContent.replace("» ", "");
+    if (link.hash) item.addEventListener("click", () => openSection(link));
+    item.addEventListener("click", () => toggleStartMenu(false));
+    shutDownButton.before(item);
+  });
+  startButton.addEventListener("click", () => {
+    toggleVolumePanel(false);
+    toggleStartMenu(startMenu.hidden);
+    if (!startMenu.hidden) startMenu.querySelector("a").focus();
+  });
+
+  // The speaker in the tray sets the jukebox's volume, live, and this browser remembers the setting.
+  // 70 is the level the jukebox was mixed at. Gain is squared because hearing isn't linear:
+  // this way the slider feels even, and 100 is about twice the signal, still far from clipping.
+  const VOLUME_KEY = "hz90s-volume";
+  const MUTE_KEY = "hz90s-mute";
+  const MIXED_AT = 70;
+  const volumeButton = document.getElementById("volume-button");
+  const volumePanel = document.getElementById("volume-panel");
+  const volumeSlider = document.getElementById("volume-slider");
+  const volumeMute = document.getElementById("volume-mute");
+  try {
+    volumeSlider.value = localStorage.getItem(VOLUME_KEY) ?? MIXED_AT;
+    volumeMute.checked = localStorage.getItem(MUTE_KEY) === "1";
+  } catch {}
+  const volumeGain = () => (volumeMute.checked ? 0 : (volumeSlider.value / MIXED_AT) ** 2);
+  const toggleVolumePanel = (open) => {
+    volumePanel.hidden = !open;
+    volumeButton.setAttribute("aria-expanded", open);
+  };
+  const showVolume = () => volumeButton.classList.toggle("muted", volumeGain() === 0);
+  const applyVolume = () => {
+    if (audio) masterVolume.gain.setTargetAtTime(volumeGain(), audio.currentTime, 0.01);
+    showVolume();
+    try {
+      localStorage.setItem(VOLUME_KEY, volumeSlider.value);
+      localStorage.setItem(MUTE_KEY, volumeMute.checked ? "1" : "0");
+    } catch {}
+  };
+  volumeSlider.addEventListener("input", applyVolume);
+  volumeMute.addEventListener("change", applyVolume);
+  volumeButton.addEventListener("click", () => {
+    toggleStartMenu(false);
+    toggleVolumePanel(volumePanel.hidden);
+    if (!volumePanel.hidden) volumeSlider.focus();
+  });
+  showVolume();
+
+  document.addEventListener("click", (e) => {
+    if (!startMenu.hidden && !startMenu.contains(e.target) && !startButton.contains(e.target)) toggleStartMenu(false);
+    if (!volumePanel.hidden && !volumePanel.contains(e.target) && !volumeButton.contains(e.target)) toggleVolumePanel(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (!startMenu.hidden) {
+      toggleStartMenu(false);
+      startButton.focus();
+    } else if (!volumePanel.hidden) {
+      toggleVolumePanel(false);
+      volumeButton.focus();
+    } else {
+      unmaximize();
+    }
+  });
+
+  const shutdown = document.getElementById("shutdown");
+  const powerOn = document.getElementById("power-on");
+  shutDownButton.addEventListener("click", () => {
+    toggleStartMenu(false);
+    stopMusic();
+    shutdown.showModal();
+    setTimeout(() => {
+      shutdown.classList.add("safe");
+      document.getElementById("shutdown-wait").hidden = true;
+      document.getElementById("shutdown-safe").hidden = false;
+      powerOn.hidden = false;
+      powerOn.focus();
+    }, motion ? 2000 : 0);
+  });
+  powerOn.addEventListener("click", () => location.reload());
+
+  // The ICQ status isn't live: it's a usual week read off the Kyiv clock.
+  // Each day is a list of [starts at, status], and a status lasts until the next one starts.
+  // "fun" is free time: every page load picks one activity and one title for it, so a reload can change it.
+  // Friday night stays gaming on purpose, whatever the dice say.
+  const WORK_DAY = [["00:00", "sleeping"], ["08:00", "yoga"], ["08:30", "eating"], ["09:00", "coding"], ["13:00", "eating"], ["14:00", "coding"], ["18:00", "cooking"], ["19:00", "eating"]];
+  const WEEKNIGHT = [...WORK_DAY, ["20:00", "fun"]];
+  const ICQ_WEEK = {
+    Mon: WEEKNIGHT,
+    Tue: WEEKNIGHT,
+    Wed: WEEKNIGHT,
+    Thu: WEEKNIGHT,
+    Fri: [...WORK_DAY, ["20:00", "gaming"]],
+    Sat: [["00:00", "gaming"], ["01:00", "sleeping"], ["09:00", "yoga"], ["09:30", "eating"], ["10:00", "chores"], ["12:30", "cooking"], ["13:30", "eating"], ["14:30", "fun"], ["18:00", "cooking"], ["19:00", "eating"], ["20:00", "fun"]],
+    Sun: [["00:00", "sleeping"], ["09:30", "yoga"], ["10:00", "eating"], ["10:30", "fun"], ["13:00", "cooking"], ["14:00", "eating"], ["15:00", "fun"], ["19:00", "eating"], ["20:00", "fun"]],
+  };
+  // ICQ's own colors: green for online, orange for away, red when there's nobody home.
+  const ICQ_STATES = { coding: "online", fun: "online", reading: "online", gaming: "online", anime: "online", yoga: "away", eating: "away", cooking: "away", chores: "away", sleeping: "sleeping" };
+  const ICQ_TEXT = {
+    en: {
+      sleeping: ["Hlib is Sleeping", "scheduled downtime"],
+      yoga: ["Hlib is doing Yoga", "incense included"],
+      eating: ["Hlib is Eating", "nom nom nom"],
+      coding: ["Hlib is Coding", "C# RULEZ"],
+      cooking: ["Hlib is Cooking", "fried pork again?"],
+      chores: ["Hlib is doing House Chores", "send help"],
+    },
+    uk: {
+      sleeping: ["Гліб спить", "хррр..."],
+      yoga: ["Гліб на йозі", "з пахощами"],
+      eating: ["Гліб їсть", "ням-ням-ням"],
+      coding: ["Гліб кодить", "C# РУЛИТЬ"],
+      cooking: ["Гліб готує", "знову смажена свинина?"],
+      chores: ["Гліб прибирає вдома", "рятуйте"],
+    },
+  };
+  // Each activity is [what he's doing, [[title, mood], ...]]. The Ukrainian titles are in the accusative.
+  const ICQ_FUN = {
+    en: {
+      anime: ["Hlib is watching", [
+        ["Chainsmoker Cat", "one more, then I quit. Nyā"],
+        ["The Apothecary Diaries", "is it poison? wonderful!"],
+        ["Chainsaw Man", "jam on toast is luxury"],
+        ["Jujutsu Kaisen", "Domain Expansion!!!"],
+        ["My Dress-Up Darling", "hina dolls are serious business"],
+        ["Frieren", "what would Himmel do?"],
+        ["Fullmetal Alchemist", "equivalent exchange"],
+        ["Edgerunners", "don't cry, choom"],
+        ["Steins;Gate", "El Psy Kongroo"],
+      ]],
+      gaming: ["Hlib is playing", [
+        ["Quake 2", "Quad Damage!!!"],
+        ["Serious Sam", "cover is for the weak"],
+        ["GTA: Vice City", "Flash FM on repeat"],
+        ["Expedition 33", "for those who come after"],
+        ["The Witcher 3", "Roach is on the roof again"],
+        ["Civilization V", "one more turn"],
+        ["Cyberpunk 2077", "wake up, Samurai"],
+        ["Hades II", "back to the Crossroads"],
+      ]],
+      reading: ["Hlib is reading", [
+        ["The Witcher", "evil is evil"],
+        ["The Expanse", "doors and corners, kid"],
+        ["Warhammer 40k", "FOR THE EMPEROR!!!"],
+        ["Discworld", "CATS ARE NICE"],
+        ["Fight Club", "we do not talk about it"],
+        ["The Three-Body Problem", "the universe is a dark forest"],
+        ["Greek myths", "homework for Hades II"],
+        ["Fourth Wing", "my girlfriend insists"],
+      ]],
+    },
+    uk: {
+      anime: ["Гліб дивиться", [
+        ["«Некотин»", "ще одна, і кидаю. Ня"],
+        ["«Монолог травниці»", "це отрута? чудово!"],
+        ["«Людину-бензопилу»", "хліб із джемом — розкіш"],
+        ["«Джуджутсу кайсен»", "Розширення території!!!"],
+        ["«Порцелянову лялечку»", "ляльки хіна — це серйозно"],
+        ["«Фрірен»", "що зробив би Гіммель?"],
+        ["«Сталевого алхіміка»", "рівноцінний обмін"],
+        ["«Межовиків»", "не плач, чумбо"],
+        ["Steins;Gate", "El Psy Kongroo"],
+      ]],
+      gaming: ["Гліб грає в", [
+        ["Quake 2", "Quad Damage!!!"],
+        ["Serious Sam", "укриття для слабаків"],
+        ["GTA: Vice City", "Flash FM на повторі"],
+        ["Expedition 33", "заради тих, хто прийде після"],
+        ["«Відьмака 3»", "Плітка знову на даху"],
+        ["Civilization V", "ще один хід"],
+        ["Cyberpunk 2077", "прокидайся, Самураю"],
+        ["Hades II", "знову на Роздоріжжі"],
+      ]],
+      reading: ["Гліб читає", [
+        ["«Відьмака»", "зло є зло"],
+        ["«Експансію»", "двері й кути, малий"],
+        ["Warhammer 40k", "ЗА ІМПЕРАТОРА!!!"],
+        ["«Плаский світ»", "КОТИ МИЛІ"],
+        ["«Бійцівський клуб»", "про нього не говорять"],
+        ["«Проблему трьох тіл»", "всесвіт — темний ліс"],
+        ["грецькі міфи", "домашка до Hades II"],
+        ["«Четверте крило»", "моя дівчина наполягає"],
+      ]],
+    },
+  };
+  const pickOne = (list) => list[Math.floor(Math.random() * list.length)];
+  const icqText = { ...(ICQ_TEXT[document.documentElement.lang] ?? ICQ_TEXT.en) };
+  Object.entries(ICQ_FUN[document.documentElement.lang] ?? ICQ_FUN.en).forEach(([activity, [doing, titles]]) => {
+    const [title, mood] = pickOne(titles);
+    icqText[activity] = [`${doing} ${title}`, mood];
+  });
+  icqText.fun = icqText[pickOne(Object.keys(ICQ_FUN.en))];
+  const icq = document.getElementById("icq");
+  document.getElementById("icq-flower").innerHTML = Array.from({ length: 7 }, (_, i) => (
+    `<circle cx="12" cy="4.6" r="3.9" transform="rotate(${(i * 360) / 7} 12 12)"/>`
+  )).join("") + '<circle class="icq-eye" cx="12" cy="12" r="3.4"/>';
+  const showIcq = (day, time) => {
+    const [, status] = ICQ_WEEK[day].filter(([from]) => from <= time).pop();
+    icq.dataset.state = ICQ_STATES[status];
+    [document.getElementById("icq-text").textContent, document.getElementById("icq-mood").textContent] = icqText[status];
+  };
+
+  // Kyiv midnight, like the clock next to it. The seconds stop with the other animations.
+  const Y2K77 = new Date("2077-01-01T00:00:00+02:00");
+  const y2k77 = document.getElementById("y2k77");
+  const showCountdown = (now) => {
+    const seconds = Math.max(0, Math.floor((Y2K77 - now) / 1000));
+    const time = [Math.floor(seconds / 3600) % 24, Math.floor(seconds / 60) % 60, ...(motion ? [seconds % 60] : [])];
+    y2k77.textContent = `${Math.floor(seconds / 86400)}d ${time.map((n) => String(n).padStart(2, "0")).join(":")}`;
+  };
+
+  // "Europe/Kyiv" is new enough for an old browser to throw on it, and that would stop the whole script.
+  // hourCycle, because some browsers would read hour12: false as midnight being 24:00.
+  const clockFormat = (timeZone) => new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+  const dayFormat = (timeZone) => new Intl.DateTimeFormat("en-GB", { timeZone, weekday: "short" });
+  let kyivClock;
+  let kyivDay;
+  try {
+    kyivClock = clockFormat("Europe/Kyiv");
+    kyivDay = dayFormat("Europe/Kyiv");
+  } catch {
+    kyivClock = clockFormat("Europe/Kiev");
+    kyivDay = dayFormat("Europe/Kiev");
+  }
+  const clock = document.getElementById("clock");
+  const tick = () => {
+    const now = new Date();
+    const time = kyivClock.format(now);
+    clock.textContent = time;
+    showIcq(kyivDay.format(now), time);
+    showCountdown(now);
+  };
+  tick();
+  setInterval(tick, 1000);
+  document.getElementById("taskbar").hidden = false;
+  icq.hidden = false;
+  document.getElementById("y2k77-badge").hidden = false;
+
+  // GitHub Pages stamps every file with the time of the last deploy, so this never needs editing by hand.
+  const lastUpdated = new Date(document.lastModified);
+  document.getElementById("last-updated").textContent = new Intl.DateTimeFormat(document.documentElement.lang, { day: "numeric", month: "long", year: "numeric" }).format(lastUpdated);
+  document.getElementById("last-updated-line").hidden = false;
 
   restoreAll.addEventListener("click", () => {
     if (stage().kind === "fatal") {
@@ -546,11 +999,14 @@
       w.classList.remove("blown");
       w.hidden = true;
     });
+    minimized.clear();
+    renderTasks();
     document.documentElement.classList.remove("exploding");
     syncDialog();
     if (!allClosed.hidden) restoreAll.focus();
   };
   const bigBang = () => {
+    unmaximize();
     const alive = windows.filter((w) => !w.hidden);
     setWanted(wanted + 2);
     if (!motion) {
@@ -756,10 +1212,7 @@
   const runProgram = (file) => {
     print(dosText.running(file.name));
     const target = file.source.closest("section");
-    if (target.hidden) {
-      target.hidden = false;
-      syncDialog();
-    }
+    if (target.hidden) openWindow(target);
     target.scrollIntoView({ behavior: motion ? "smooth" : "auto", block: "start" });
   };
 
@@ -775,6 +1228,7 @@
       formatReboot.hidden = false;
       formatReboot.focus();
     };
+    stopMusic();
     formatScreen.showModal();
     if (!motion) {
       finish();

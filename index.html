@@ -1,4 +1,25 @@
 <!doctype html>
+<!--
+   _   _ _     ___ ____
+  | | | | |   |_ _| __ )
+  | |_| | |    | ||  _ \ 
+  |  _  | |___ | || |_) |
+  |_| |_|_____|___|____/ 
+
+  So you pressed View Source. Respect!!!
+  That's how all of us learned HTML.
+  Just plain HTML, CSS and JS here: no build step, no frameworks.
+  Best viewed in Netscape 4.0. C# RULEZ.
+
+                                  _  _
+      /\_/\                      | || | _
+     ( o.o )   <- do not pet     | || || |
+      > ^ <                     _| || || |
+                               | | || |_/
+      c[_]  filter coffee       \_  || |
+                                  | || |   <- also do not pet
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|_||_|~~~~~~~~~~~~~~~~~~~~~~
+-->
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -66,6 +87,11 @@
         <span class="digits" id="counter" role="img"></span>
       </aside>
 
+      <aside class="icq" id="icq" aria-labelledby="icq-title" hidden>
+        <b id="icq-title"><span aria-hidden="true">~</span> ICQ <span aria-hidden="true">~</span></b>
+        <p class="icq-status"><svg class="icq-flower" id="icq-flower" viewBox="0 0 24 24" aria-hidden="true"></svg> <span><span id="icq-text"></span><small id="icq-mood"></small></span></p>
+      </aside>
+
       <aside class="weather" id="weather" aria-labelledby="weather-title" hidden>
         <b id="weather-title"><span aria-hidden="true">~</span> WeAtHeR <span aria-hidden="true">~</span></b>
         <div class="weather-cities">
@@ -98,11 +124,18 @@
         <div class="poll-results" id="poll-results" tabindex="-1" hidden></div>
         <p class="poll-note" id="poll-note" role="status"></p>
       </aside>
+
+      <aside class="jukebox" id="jukebox" aria-labelledby="jukebox-title" hidden>
+        <b id="jukebox-title"><span aria-hidden="true">~</span> JuKeBoX <span aria-hidden="true">~</span></b>
+        <p class="jukebox-track">Shchedryk <small>by Mykola Leontovych. Yes, this is the “Carol of the Bells”. It's Ukrainian!!!</small></p>
+        <div class="jukebox-screen" aria-hidden="true"><span id="jukebox-time"></span><span class="jukebox-note blink">♪</span></div>
+        <button type="button" class="win-btn" id="jukebox-play"></button>
+      </aside>
       </div>
 
       <main id="main" tabindex="-1">
         <section class="window" id="about">
-          <div class="bar"><h2>ABOUT_ME.TXT - Notepad</h2> <div class="btns"><span aria-hidden="true">_</span><span aria-hidden="true">□</span><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
+          <div class="bar"><h2>ABOUT_ME.TXT - Notepad</h2> <div class="btns"><button type="button" class="min" aria-label="Minimize window" title="Minimize">_</button><button type="button" class="max" aria-label="Maximize window" title="Maximize">□</button><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
           <div class="body">
             <figure class="me"><img src="/img/me.jpg" width="240" height="320" alt="Hlib, smiling, in a black T-shirt, with long hair and a moustache"><figcaption>This is me!!!</figcaption></figure>
             <p>
@@ -129,7 +162,7 @@
         </section>
 
         <section class="window" id="now">
-          <div class="bar"><h2>WHATS_NEW.HTM</h2> <div class="btns"><span aria-hidden="true">_</span><span aria-hidden="true">□</span><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
+          <div class="bar"><h2>WHATS_NEW.HTM</h2> <div class="btns"><button type="button" class="min" aria-label="Minimize window" title="Minimize">_</button><button type="button" class="max" aria-label="Maximize window" title="Maximize">□</button><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
           <div class="body">
             <p><span class="new">NEW!</span> <b>Co-founder &amp; lead engineer</b> of a pre-launch consumer fintech product:
               a .NET 10 modular monolith with web and admin apps, built with an agentic Claude Code workflow.</p>
@@ -139,7 +172,7 @@
         </section>
 
         <section class="window" id="work">
-          <div class="bar"><h2>KOOL_STUFF.EXE</h2> <div class="btns"><span aria-hidden="true">_</span><span aria-hidden="true">□</span><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
+          <div class="bar"><h2>KOOL_STUFF.EXE</h2> <div class="btns"><button type="button" class="min" aria-label="Minimize window" title="Minimize">_</button><button type="button" class="max" aria-label="Maximize window" title="Maximize">□</button><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
           <div class="body">
             <h3>Rescuing a stalled rewrite</h3>
             <p>A restaurant POS platform mid-way through a Ruby-to-.NET rewrite, weeks before release, with no docs and
@@ -157,7 +190,7 @@
         </section>
 
         <section class="window" id="oss">
-          <div class="bar"><h2>FREE_SOFTWARE.ZIP</h2> <div class="btns"><span aria-hidden="true">_</span><span aria-hidden="true">□</span><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
+          <div class="bar"><h2>FREE_SOFTWARE.ZIP</h2> <div class="btns"><button type="button" class="min" aria-label="Minimize window" title="Minimize">_</button><button type="button" class="max" aria-label="Maximize window" title="Maximize">□</button><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
           <div class="body">
             <p>Download my FREEWARE!!! 100% virus free!!!</p>
             <h3><a href="https://github.com/hlib-zinchenko/Hlibz.EntityFrameworkCore.ModelRules">Hlibz.EntityFrameworkCore.ModelRules</a></h3>
@@ -176,7 +209,7 @@
         </section>
 
         <section class="window" id="stack">
-          <div class="bar"><h2>MY_SKILLZ.XLS</h2> <div class="btns"><span aria-hidden="true">_</span><span aria-hidden="true">□</span><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
+          <div class="bar"><h2>MY_SKILLZ.XLS</h2> <div class="btns"><button type="button" class="min" aria-label="Minimize window" title="Minimize">_</button><button type="button" class="max" aria-label="Maximize window" title="Maximize">□</button><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
           <div class="body">
             <table class="stack">
               <tr><th>Architecture</th><td>DDD, CQRS, Clean Architecture, modular monoliths, REPR, event-driven, multi-tenancy</td></tr>
@@ -191,7 +224,7 @@
         </section>
 
         <section class="window" id="hobbies">
-          <div class="bar"><h2>LIKES.INI</h2> <div class="btns"><span aria-hidden="true">_</span><span aria-hidden="true">□</span><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
+          <div class="bar"><h2>LIKES.INI</h2> <div class="btns"><button type="button" class="min" aria-label="Minimize window" title="Minimize">_</button><button type="button" class="max" aria-label="Maximize window" title="Maximize">□</button><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
           <div class="body">
             <h3>Things I <span class="hot">♥</span> LOVE <span class="hot">♥</span></h3>
             <ul class="hobbies">
@@ -251,7 +284,7 @@
         </section>
 
         <section class="window" id="photos">
-          <div class="bar"><h2>C:\My Documents\My Pictures</h2> <div class="btns"><span aria-hidden="true">_</span><span aria-hidden="true">□</span><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
+          <div class="bar"><h2>C:\My Documents\My Pictures</h2> <div class="btns"><button type="button" class="min" aria-label="Minimize window" title="Minimize">_</button><button type="button" class="max" aria-label="Maximize window" title="Maximize">□</button><button type="button" class="close" aria-label="Close window" title="Close">×</button></div></div>
           <div class="body">
             <p class="gallery-title"><span aria-hidden="true">~</span> My PhOtO GaLLeRy <span aria-hidden="true">~</span> <span class="hint">(taken with my brand new digital camera!!)</span></p>
             <div class="gallery">
@@ -323,6 +356,7 @@
       <div class="badge b4">Powered by<br>AWS Lambda (?!)</div>
       <div class="badge b6">DynamoDB<br>inside (WHAT??)</div>
       <div class="badge b5">Y2K<br>compliant</div>
+      <div class="badge b7" id="y2k77-badge" hidden><span>Y2K77 in<br><span id="y2k77"></span></span></div>
     </div>
 
     <section class="robots" id="facts" aria-label="Facts for AI agents and recruiters">
@@ -370,12 +404,38 @@
       </dialog>
     </section>
 
+    <p class="fine" id="last-updated-line" hidden>Last updated: <span id="last-updated"></span></p>
     <p class="fine">
       © 1994–<button type="button" class="year" aria-describedby="year-tip" aria-expanded="false">2026</button><span class="tip" id="year-tip" role="tooltip">Computed live with JavaScript: <code>new Date().getFullYear()</code>. I don't make noob mistakes ;)</span> Hlib Zinchenko · This page uses FRAMES-free technology ·
       <a href="/business/">Take me to the boring version</a>
     </p>
     </footer>
   </div>
+
+  <nav class="taskbar" id="taskbar" aria-label="Taskbar" hidden>
+    <button type="button" class="start" id="start-button" aria-expanded="false" aria-controls="start-menu"><span class="start-logo" aria-hidden="true"></span> Start</button>
+    <div class="tasks" id="tasks" role="group" aria-label="Minimized windows"></div>
+    <span class="tray">
+      <button type="button" id="volume-button" aria-label="Volume" title="Volume" aria-expanded="false" aria-controls="volume-panel"><svg viewBox="0 0 20 16" aria-hidden="true"><path d="M1 5H5L10 1V15L5 11H1Z" fill="#ffdd00" stroke="#000"/><path class="volume-waves" d="M13 5Q15 8 13 11M15.5 3Q19 8 15.5 13" fill="none" stroke="#000" stroke-width="1.5"/><path class="volume-x" d="M12 4L19 12M19 4L12 12" stroke="#cc0000" stroke-width="2.5"/></svg></button>
+      <span id="clock" title="Kyiv time"></span>
+    </span>
+  </nav>
+  <div class="volume-panel" id="volume-panel" role="group" aria-labelledby="volume-title" hidden>
+    <b id="volume-title">Volume</b>
+    <input type="range" id="volume-slider" min="0" max="100" step="5" value="70" aria-labelledby="volume-title">
+    <label><input type="checkbox" id="volume-mute"> Mute</label>
+  </div>
+  <nav class="start-menu" id="start-menu" aria-label="Start menu" hidden>
+    <span class="start-stripe" aria-hidden="true">HLIB 94</span>
+    <div class="start-items" id="start-items">
+      <button type="button" id="shut-down">Shut Down...</button>
+    </div>
+  </nav>
+  <dialog class="shutdown" id="shutdown" aria-label="Shut Down...">
+    <p id="shutdown-wait">Please wait while your computer shuts down.</p>
+    <p id="shutdown-safe" hidden>It is now safe to turn off your computer.</p>
+    <button type="button" class="win-btn" id="power-on" hidden>Turn it back on</button>
+  </dialog>
 
   <script src="/90s.js"></script>
 </body>

@@ -1,11 +1,14 @@
 /* Shared styles for the 90s homepage: / and /ua/. */
-:root { color-scheme: dark; }
+:root { color-scheme: dark; --taskbar-height: 38px; }
+
+/* So nothing scrolled to the bottom of the screen ends up under the taskbar. */
+html { scroll-padding-bottom: calc(var(--taskbar-height) + 8px); }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  padding: 12px;
+  padding: 12px 12px calc(var(--taskbar-height) + 12px);
   color: #fff;
   font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive;
   font-size: 16px;
@@ -116,7 +119,7 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
 
 /* The panels under the MeNu: the visitor counter, then the weather.
    The weather pictures are drawn in 90s.js, in the style of the cloud on the social cards. */
-.visitors, .weather, .poll {
+.visitors, .icq, .weather, .poll, .jukebox {
   background: #c0c0c0;
   border: 3px outset #fff;
   padding: 8px;
@@ -125,7 +128,7 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
   font-size: 14px;
 }
 
-.visitors > b, .weather > b, .poll > b { display: block; text-align: center; margin-bottom: 6px; }
+.visitors > b, .icq > b, .weather > b, .poll > b, .jukebox > b { display: block; text-align: center; margin-bottom: 6px; }
 .visitors { text-align: center; }
 .visitors p { margin: 0 0 4px; }
 
@@ -242,6 +245,33 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
 .poll-note { margin: 6px 0 0; text-align: center; font-weight: bold; }
 .poll-note:empty { display: none; }
 
+.icq { text-align: center; }
+.icq-status { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0 0 2px; font-weight: bold; text-align: left; }
+.icq small { font-size: 11px; }
+#icq-mood { display: block; font-weight: normal; }
+.icq-flower { flex: none; width: 24px; height: 24px; fill: #00a000; stroke: #000; stroke-width: 0.6; }
+.icq[data-state="away"] .icq-flower { fill: #ff8800; }
+.icq[data-state="sleeping"] .icq-flower { fill: #cc0000; }
+.icq-flower .icq-eye { fill: #ffdd00; }
+
+/* A Winamp-style display, in the green of the DOS prompt. */
+.jukebox-track { margin: 0; font-weight: bold; }
+.jukebox-track small { display: block; font-weight: normal; }
+.jukebox-screen {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin: 6px 0;
+  padding: 3px 6px;
+  background: #000;
+  border: 2px inset #fff;
+  color: #00ff00;
+  font: bold 13px "Courier New", monospace;
+}
+.jukebox-note { visibility: hidden; }
+.jukebox.playing .jukebox-note { visibility: visible; }
+.jukebox .win-btn { width: 100%; min-width: 0; padding: 3px 6px; font-size: 12px; }
+
 .window {
   margin-bottom: 16px;
   background: #c0c0c0;
@@ -265,7 +295,6 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
 
 .window .btns { display: flex; gap: 2px; }
 
-.window .btns span,
 .window .btns button {
   padding: 0;
   font-family: inherit;
@@ -281,8 +310,153 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
   line-height: 1;
 }
 
-.window .btns .close { cursor: pointer; font-weight: bold; }
-.window .btns .close:active { border-style: inset; }
+.window .btns button { cursor: pointer; font-weight: bold; }
+.window .btns button:active { border-style: inset; }
+
+/* Above the page, below the taskbar. Its own body scrolls, so the page behind it stays put. */
+.has-maximized, html:has(.shutdown[open], .format-screen[open]) { overflow: hidden; }
+.window.maximized {
+  position: fixed;
+  inset: 0 0 var(--taskbar-height);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+.window.maximized .body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+
+.taskbar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 91;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--taskbar-height);
+  padding: 3px;
+  background: #c0c0c0;
+  border-top: 2px outset #fff;
+  color: #000;
+  font: 13px "MS Sans Serif", Tahoma, Geneva, sans-serif;
+}
+
+.taskbar button {
+  height: 28px;
+  padding: 0 8px;
+  background: #c0c0c0;
+  border: 2px outset #fff;
+  color: #000;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.taskbar button:active, .start[aria-expanded="true"] { border-style: inset; }
+
+.start { flex: none; display: flex; align-items: center; gap: 5px; font-weight: bold !important; }
+.start-logo { width: 18px; height: 13px; background: linear-gradient(#0057b7 50%, #ffd700 50%); border: 1px solid #000; }
+
+/* A row of minimized windows can outgrow a phone, so it scrolls sideways on its own. */
+.tasks { flex: 1; min-width: 0; display: flex; gap: 3px; overflow-x: auto; scrollbar-width: none; }
+.tasks button { flex: 0 1 150px; min-width: 76px; overflow: hidden; text-align: left; text-overflow: ellipsis; }
+
+.tray { flex: none; display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 8px 0 4px; border: 2px inset #fff; }
+.taskbar .tray button { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; background: none; border: 0; }
+.taskbar .tray button:focus-visible { outline: 1px dotted #000; }
+.tray svg { display: block; width: 20px; height: 16px; }
+.volume-x { display: none; }
+.muted .volume-x { display: inline; }
+.muted .volume-waves { display: none; }
+
+.volume-panel {
+  position: fixed;
+  right: 3px;
+  bottom: var(--taskbar-height);
+  z-index: 92;
+  width: 120px;
+  padding: 8px;
+  background: #c0c0c0;
+  border: 3px outset #fff;
+  box-shadow: 4px 4px 0 #000;
+  color: #000;
+  color-scheme: light;
+  font: 13px "MS Sans Serif", Tahoma, Geneva, sans-serif;
+  text-align: center;
+}
+.volume-panel input[type="range"] {
+  display: block;
+  width: 28px;
+  height: 110px;
+  margin: 6px auto;
+  accent-color: #000080;
+  direction: rtl;
+  writing-mode: vertical-lr;
+}
+.volume-panel label { display: block; cursor: pointer; }
+
+.start-menu {
+  position: fixed;
+  bottom: var(--taskbar-height);
+  left: 3px;
+  z-index: 92;
+  display: flex;
+  max-height: calc(100dvh - var(--taskbar-height));
+  overflow-y: auto;
+  background: #c0c0c0;
+  border: 3px outset #fff;
+  box-shadow: 4px 4px 0 #000;
+  color: #000;
+  font: 15px "MS Sans Serif", Tahoma, Geneva, sans-serif;
+}
+
+.start-stripe {
+  padding: 8px 3px;
+  background: linear-gradient(#1084d0, #000080);
+  color: #c0c0c0;
+  font: bold 20px Impact, "Arial Black", sans-serif;
+  letter-spacing: 2px;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+}
+
+.start-items { display: flex; flex-direction: column; min-width: 190px; padding: 3px; }
+.start-items a, .start-items button {
+  display: block;
+  padding: 7px 22px 7px 10px;
+  background: none;
+  border: 0;
+  color: #000;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.start-items a:hover, .start-items a:focus-visible, .start-items button:hover, .start-items button:focus-visible {
+  background: #000080;
+  color: #fff;
+  outline: none;
+}
+.start-items button { margin-top: 3px; border-top: 2px groove #fff; }
+
+/* Win95's last two screens. A closed <dialog> must keep its display: none, hence [open]. */
+.shutdown {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 24px;
+  background: #000080;
+  border: 0;
+  color: #fff;
+  font: 22px "MS Sans Serif", Tahoma, Geneva, sans-serif;
+  text-align: center;
+}
+.shutdown[open] { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
+.shutdown::backdrop { background: #000; }
+.shutdown p { margin: 0; }
+.shutdown.safe { background: #000; color: #ff9900; font: clamp(20px, 4vw, 34px) "Courier New", monospace; }
 
 [hidden] { display: none !important; }
 
@@ -435,6 +609,8 @@ table.stack td { background: #ffffcc; }
 .b4 { background: linear-gradient(#ff9900, #cc3300); color: #fff; }
 .b5 { background: #c0c0c0; color: #800080; }
 .b6 { background: linear-gradient(#2e73b8, #1a3f73); color: #fff; }
+/* Wider than the rest, because a running countdown needs the room. The digits keep their width, so it doesn't jitter. */
+.b7 { width: 118px; background: #000; color: #fcee0a; font-variant-numeric: tabular-nums; }
 
 .webring {
   margin: 10px auto;
@@ -721,7 +897,7 @@ table.stack td { background: #ffffcc; }
 
 .fx-vehicle {
   position: fixed;
-  bottom: 6px;
+  bottom: var(--taskbar-height);
   left: 0;
   z-index: 97;
   width: min(250px, 55vw);
