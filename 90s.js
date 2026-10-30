@@ -380,7 +380,11 @@
   // _ sends a window to the taskbar and □ fills the screen with it. A minimized window is hidden too,
   // but it isn't closed, so it's kept in its own list and doesn't count towards "you closed everything".
   // Each time everything gets closed the dialog gets grumpier, until the last one only offers a reload.
-  const windows = [...document.querySelectorAll("section.window")];
+  // The MS-DOS Prompt has the same buttons, but it's outside <main>: closing it isn't closing everything,
+  // and it survives BIGBANG, because a phone needs it to type the next cheat.
+  const windows = [...document.querySelectorAll("main section.window")];
+  const dosWindow = document.getElementById("dos");
+  const everyWindow = [...windows, dosWindow];
   const minimized = new Set();
   let maximized = null;
   let scrollBeforeMaximize = 0;
@@ -487,7 +491,7 @@
     target.focus({ preventScroll: true });
   };
 
-  windows.forEach((w, i) => {
+  everyWindow.forEach((w, i) => {
     const close = w.querySelector(".close");
     const minimize = w.querySelector(".min");
     const max = w.querySelector(".max");
@@ -526,7 +530,7 @@
     link.addEventListener("click", () => openSection(link));
   });
 
-  const reopenAll = () => windows.forEach(openWindow);
+  const reopenAll = () => everyWindow.forEach(openWindow);
 
   // The taskbar: Start on the left, then the minimized windows, then a clock in Kyiv time.
   // The Start menu is the MeNu again, so it needs no text or translations of its own.
@@ -1144,7 +1148,7 @@
     }
   });
 
-  // The DOS prompt under the two static boxes. TYPE reads the real page rather than a copy,
+  // The prompt under the two static boxes in the MS-DOS window. TYPE reads the real page rather than a copy,
   // so the prompt can't disagree with it, stays in the page's language and also sees closed windows.
   const DOS_TEXT = {
     en: {
@@ -1154,6 +1158,7 @@
         "TYPE <file>   show what's inside a file",
         "<file>.EXE    run a program",
         "CLS           clear the screen",
+        "UNDELETE      bring back what CLS wiped",
         "VER           show the version",
         "FORMAT C:     don't.",
         "",
@@ -1174,6 +1179,7 @@
       sudo: "This is DOS. There is only you, and you're already in charge.",
       exit: "There is no escape from the 90s.",
       running: (name) => `Running ${name}...`,
+      binary: "MZ\u0090\u2666\u263a\u263b \u00ff\u00ff \u00b8 @\nThis program cannot be run in DOS mode.\n$PE\n\n(Run it anyway, choom.)",
       warning: "WARNING, ALL DATA ON NON-REMOVABLE DISK\nDRIVE C: WILL BE LOST!\nProceed with Format (Y/N)?",
       cancelled: "Smart move. Nothing was harmed.",
       formatting: "Formatting 1,994 MB...",
@@ -1188,6 +1194,7 @@
         "TYPE <файл>   показати, що у файлі",
         "<файл>.EXE    запустити програму",
         "CLS           очистити екран",
+        "UNDELETE      повернути те, що стер CLS",
         "VER           показати версію",
         "FORMAT C:     не треба.",
         "",
@@ -1208,6 +1215,7 @@
       sudo: "Це DOS. Тут є тільки ти, і ти вже головний.",
       exit: "Із 90-х виходу немає.",
       running: (name) => `Запускаю ${name}...`,
+      binary: "MZ\u0090\u2666\u263a\u263b \u00ff\u00ff \u00b8 @\nThis program cannot be run in DOS mode.\n$PE\n\n(Все одно запускай, чумбо.)",
       warning: "УВАГА! УСІ ДАНІ НА ЖОРСТКОМУ ДИСКУ C:\nБУДЕ ВТРАЧЕНО!\nПродовжити форматування (Y/N)?",
       cancelled: "Мудре рішення. Ніхто не постраждав.",
       formatting: "Форматування 1 994 МБ...",
@@ -1218,7 +1226,7 @@
   };
   const dosText = DOS_TEXT[document.documentElement.lang] ?? DOS_TEXT.en;
 
-  const dos = document.getElementById("dos");
+  const dosSession = document.getElementById("dos-session");
   const dosLog = document.getElementById("dos-log");
   const print = (text) => {
     const line = document.createElement("div");
@@ -1240,6 +1248,8 @@
     ["HIRE_ME.EXE", "#hire-me"],
     ["CHEATS.TXT", "#cheats .notepad"],
   ].map(([name, selector]) => ({ name, source: document.querySelector(selector) }));
+  // The one file that isn't part of this page: running it leaves for the 2077 version.
+  FILES.push({ name: "2077.EXE", href: "/2077/", size: 2077, date: "01-01-77" });
 
   // By hand, because innerText only works on what's on screen, and a closed window isn't.
   const toText = (node) => {
@@ -1252,7 +1262,7 @@
     if (node.matches("tr")) return `\n${inner}`;
     return node.matches("p, h3, dl, ul, ol, table") ? `\n${inner}\n` : inner;
   };
-  const fileText = (file) => toText(file.source).replace(/ *\n */g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  const fileText = (file) => (file.source ? toText(file.source).replace(/ *\n */g, "\n").replace(/\n{3,}/g, "\n\n").trim() : dosText.binary);
 
   const typeFile = ([path]) => {
     if (!path) return print(dosText.missing);
@@ -1262,14 +1272,20 @@
   };
 
   const listFiles = () => {
-    const sizes = FILES.map(fileText).map((text) => text.length);
-    const rows = FILES.map(({ name }, i) => `${name.padEnd(18)}${sizes[i].toLocaleString("en-US").padStart(7)}  12-31-99`);
+    const sizes = FILES.map((file) => file.size ?? fileText(file).length);
+    const rows = FILES.map(({ name, date = "12-31-99" }, i) => `${name.padEnd(18)}${sizes[i].toLocaleString("en-US").padStart(7)}  ${date}`);
     const bytes = sizes.reduce((sum, size) => sum + size, 0).toLocaleString("en-US");
     print([` ${dosText.volume}`, ` ${dosText.directory}`, "", ...rows, "", dosText.total(FILES.length, bytes)].join("\n"));
   };
 
   const runProgram = (file) => {
     print(dosText.running(file.name));
+    if (file.href) {
+      setTimeout(() => { location.href = file.href; }, 800);
+      return;
+    }
+    // HIRE_ME.EXE is one of the boxes CLS hides.
+    file.source.hidden = false;
     const target = file.source.closest("section");
     if (target.hidden) openWindow(target);
     target.scrollIntoView({ behavior: motion ? "smooth" : "auto", block: "start" });
@@ -1330,13 +1346,27 @@
     }
   };
 
+  // CLS wipes the whole screen, the two static boxes too. That only hides them: robots read them in the HTML.
+  const staticBoxes = [...document.querySelectorAll(".robots")];
+  const clearScreen = () => {
+    staticBoxes.forEach((box) => { box.hidden = true; });
+    dosLog.replaceChildren();
+  };
+  const undelete = () => {
+    clearScreen();
+    staticBoxes.forEach((box) => { box.hidden = false; });
+    print(dosText.banner);
+  };
+
   const say = (text) => () => print(text);
   const COMMANDS = {
     HELP: say(dosText.help),
     "?": say(dosText.help),
     DIR: listFiles,
     TYPE: typeFile,
-    CLS: () => dosLog.replaceChildren(),
+    CLS: clearScreen,
+    UNDELETE: undelete,
+    RESTORE: undelete,
     VER: say(dosText.banner),
     FORMAT: format,
     CD: ([path]) => print(path ? dosText.invalidDirectory : "C:\\"),
@@ -1366,7 +1396,7 @@
   };
 
   print(dosText.banner);
-  dos.hidden = false;
+  dosSession.hidden = false;
 
   const typedBefore = [];
   let historyAt = -1;
@@ -1388,7 +1418,7 @@
     historyAt = Math.max(-1, Math.min(historyAt + (e.key === "ArrowUp" ? 1 : -1), typedBefore.length - 1));
     dosInput.value = typedBefore[historyAt] ?? "";
   });
-  dos.addEventListener("click", () => {
+  dosSession.addEventListener("click", () => {
     if (!getSelection().toString()) dosInput.focus();
   });
 })();

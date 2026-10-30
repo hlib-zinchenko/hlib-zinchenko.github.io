@@ -323,7 +323,8 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
   flex-direction: column;
   margin: 0;
 }
-.window.maximized .body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.window.maximized .body, .window.maximized .dos-screen { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.window.maximized .dos-log { max-height: 60dvh; }
 
 .taskbar {
   position: fixed;
@@ -754,19 +755,19 @@ table.stack td { background: #ffffcc; }
 
 #about .body { display: flow-root; }
 
-.robots {
-  margin: 14px auto;
-  max-width: 560px;
+/* The MS-DOS Prompt: one black screen with the two static boxes, then the real prompt under them. */
+.window.dos:not(.maximized) { margin: 14px auto; max-width: 680px; }
+.dos-screen {
   padding: 10px 14px;
   background: #000;
-  border: 3px double #00ff00;
+  border: 2px inset #fff;
   color: #00ff00;
   font: 14px/1.4 "Courier New", monospace;
-  text-align: center;
 }
-
+.dos-screen:focus-within { box-shadow: inset 0 0 0 1px #66ff66; }
+.robots { margin-bottom: 18px; }
 .robots p { margin: 6px 0 0; }
-.robots .robots-prompt { margin: 0 0 6px; text-align: left; color: #c0c0c0; }
+.robots .robots-prompt { margin: 0 0 6px; color: #c0c0c0; }
 .robots .robots-human { color: #66ff66; font-size: 12px; }
 .robots a { color: #66ffff; }
 .facts { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 8px 0 0; text-align: left; }
@@ -828,8 +829,6 @@ table.stack td { background: #ffffcc; }
   100% { transform: translateY(70px); color: #003b00; opacity: 0; }
 }
 
-/* The DOS prompt, under the two static boxes. */
-.dos { text-align: left; }
 .dos-log { position: relative; max-height: 320px; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
 .dos-log:focus-visible { outline: 1px dotted #00ff00; }
 .dos-line { display: flex; align-items: baseline; gap: 1ch; margin-top: 6px; }
@@ -846,7 +845,6 @@ table.stack td { background: #ffffcc; }
   caret-color: #00ff00;
   font: 16px "Courier New", monospace;
 }
-.dos:focus-within { border-color: #66ff66; box-shadow: 0 0 0 1px #66ff66; }
 
 .format-screen {
   width: 100vw;
