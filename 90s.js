@@ -630,15 +630,15 @@
   // "fun" is free time: every page load picks one activity and one title for it, and so does changing the clock.
   // Friday night stays gaming on purpose, whatever the dice say.
   const WORK_DAY = [["00:00", "sleeping"], ["08:00", "yoga"], ["08:30", "eating"], ["09:00", "coding"], ["13:00", "eating"], ["14:00", "coding"], ["18:00", "cooking"], ["19:00", "eating"]];
-  const WEEKNIGHT = [...WORK_DAY, ["20:00", "fun"]];
+  const WEEKNIGHT = [...WORK_DAY, ["20:00", "fun"], ["23:30", "sleeping"]];
   const ICQ_WEEK = {
     Mon: WEEKNIGHT,
     Tue: WEEKNIGHT,
     Wed: WEEKNIGHT,
     Thu: WEEKNIGHT,
     Fri: [...WORK_DAY, ["20:00", "gaming"]],
-    Sat: [["00:00", "gaming"], ["01:00", "sleeping"], ["09:00", "yoga"], ["09:30", "eating"], ["10:00", "chores"], ["12:30", "cooking"], ["13:30", "eating"], ["14:30", "fun"], ["18:00", "cooking"], ["19:00", "eating"], ["20:00", "fun"]],
-    Sun: [["00:00", "sleeping"], ["09:30", "yoga"], ["10:00", "eating"], ["10:30", "fun"], ["13:00", "cooking"], ["14:00", "eating"], ["15:00", "fun"], ["19:00", "eating"], ["20:00", "fun"]],
+    Sat: [["00:00", "gaming"], ["01:00", "sleeping"], ["09:00", "yoga"], ["09:30", "eating"], ["10:00", "chores"], ["12:30", "cooking"], ["13:30", "eating"], ["14:30", "fun"], ["18:00", "cooking"], ["19:00", "eating"], ["20:00", "fun"], ["23:30", "sleeping"]],
+    Sun: [["00:00", "sleeping"], ["09:30", "yoga"], ["10:00", "eating"], ["10:30", "fun"], ["13:00", "cooking"], ["14:00", "eating"], ["15:00", "fun"], ["19:00", "eating"], ["20:00", "fun"], ["23:30", "sleeping"]],
   };
   // ICQ's own colors: green for online, orange for away, red when there's nobody home.
   const ICQ_STATES = { coding: "online", fun: "online", reading: "online", gaming: "online", anime: "online", yoga: "away", eating: "away", cooking: "away", chores: "away", sleeping: "sleeping" };
