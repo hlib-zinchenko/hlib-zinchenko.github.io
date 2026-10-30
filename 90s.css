@@ -215,9 +215,20 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
 /* On phones the panel spans the screen, so the two cities sit side by side. */
 @media (max-width: 640px) { .weather-cities { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
+/* Turtle green. All the plain text on it is black, and the names go on fridge-magnet tiles like the counter's digits. */
+.poll { background: #57a639; border-color: #a9e08f; }
 .poll fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
 .poll legend { margin-bottom: 4px; padding: 0; font-weight: bold; }
-.poll label { display: block; padding: 2px 0; cursor: pointer; }
+.poll label, .poll-name {
+  display: block;
+  padding: 2px 5px;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.poll label { margin-top: 4px; cursor: pointer; }
+.poll-results small { display: block; margin-top: 2px; }
 /* color-scheme: the site's dark scheme would turn them into black dots on the grey panel. */
 .poll input { margin: 0 4px 0 0; vertical-align: -1px; color-scheme: light; }
 .poll-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -228,7 +239,7 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
 .poll-track { display: block; height: 12px; margin-top: 1px; background: #fff; border: 2px inset #fff; }
 .poll-bar { display: block; height: 100%; }
 .poll-results .poll-total { margin: 0; text-align: center; font-size: 12px; }
-.poll-note { margin: 6px 0 0; text-align: center; color: #cc0000; font-weight: bold; }
+.poll-note { margin: 6px 0 0; text-align: center; font-weight: bold; }
 .poll-note:empty { display: none; }
 
 .window {

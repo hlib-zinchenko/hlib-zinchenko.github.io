@@ -169,14 +169,18 @@
     uk: { total: (votes) => `Усього голосів: ${votes}`, offline: "No carrier =(" },
   };
   const pollText = POLL_TEXT[document.documentElement.lang] ?? POLL_TEXT.en;
-  // Each turtle's bar is the color of its mask.
-  const TURTLE_COLORS = { leo: "#0000cc", donnie: "#6600cc", raph: "#cc0000", mikey: "#d14800" };
+  // Each turtle's name and bar are the color of its mask. The names sit on white tiles (see 90s.css),
+  // because these colors are unreadable right on the green panel.
+  const TURTLE_COLORS = { mikey: "#d14800", leo: "#0000cc", donnie: "#6600cc", raph: "#cc0000" };
   const poll = document.getElementById("poll");
   const pollForm = document.getElementById("poll-form");
   const pollResults = document.getElementById("poll-results");
   const pollNote = document.getElementById("poll-note");
   const pollVote = document.getElementById("poll-vote");
-  const turtles = [...pollForm.elements.turtle].map((radio) => ({ id: radio.value, name: radio.parentElement.textContent.trim() }));
+  const turtles = [...pollForm.elements.turtle].map((radio) => {
+    radio.parentElement.style.color = TURTLE_COLORS[radio.value];
+    return { id: radio.value, name: radio.parentElement.textContent.trim() };
+  });
   let myVote = null;
   try { myVote = localStorage.getItem(VOTE_KEY); } catch {}
 
@@ -185,7 +189,7 @@
     const rows = turtles.map(({ id, name }) => {
       const share = total ? Math.round((votes[id] / total) * 100) : 0;
       const mine = id === myVote ? ' <span class="hot">♥</span>' : "";
-      return `<p>${name}${mine}<br><small>${votes[id]} (${share}%)</small><span class="poll-track"><span class="poll-bar" style="width:${share}%;background:${TURTLE_COLORS[id]}"></span></span></p>`;
+      return `<p><span class="poll-name" style="color:${TURTLE_COLORS[id]}">${name}${mine}</span><small>${votes[id]} (${share}%)</small><span class="poll-track"><span class="poll-bar" style="width:${share}%;background:${TURTLE_COLORS[id]}"></span></span></p>`;
     });
     pollResults.innerHTML = `${rows.join("")}<p class="poll-total">${pollText.total(total)}</p>`;
     pollResults.hidden = false;
