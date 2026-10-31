@@ -1,6 +1,6 @@
 // Shared script for the 90s homepage: / and /ua/.
 (() => {
-  // Animations: the button at the top stops them all, and the choice is remembered.
+  // Animations: the star in the tray stops them all, and the choice is remembered.
   // With no saved choice, the system's "reduce motion" setting decides.
   const MOTION_KEY = "hz90s-motion";
   const MOTION_TEXT = {
@@ -14,12 +14,10 @@
   const applyMotion = () => {
     document.documentElement.classList.toggle("no-motion", !motion);
     document.documentElement.classList.toggle("motion-on", motion);
-    motionToggle.innerHTML = motion
-      ? `<span aria-hidden="true">■</span> ${MOTION_TEXT.stop}`
-      : `<span aria-hidden="true">▶</span> ${MOTION_TEXT.play}`;
+    motionToggle.title = motion ? MOTION_TEXT.stop : MOTION_TEXT.play;
+    motionToggle.setAttribute("aria-label", motionToggle.title);
   };
   applyMotion();
-  motionToggle.hidden = false;
   motionToggle.addEventListener("click", () => {
     motion = !motion;
     try { localStorage.setItem(MOTION_KEY, motion ? "on" : "off"); } catch {}

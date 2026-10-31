@@ -47,13 +47,12 @@
   <a class="skip" href="#main">Перейти до вмісту</a>
   <div class="page">
     <header>
-    <div class="topbar">
-    <button type="button" class="win-btn motion-toggle" id="motion-toggle" hidden>Зупинити анімацію</button>
+    <noscript>
     <nav class="lang" aria-label="Мова">
       <a href="/" hreflang="en" lang="en" title="English"><img src="/img/flag-gb.svg" alt="English"></a>
       <a href="/ua/" hreflang="uk" aria-current="page" title="Українська"><img src="/img/flag-ua.svg" alt="Українська"></a>
     </nav>
-    </div>
+    </noscript>
 
     <div class="marquee"><span>*** ЛАСКАВО ПРОСИМО НА МОЮ ДОМАШНЮ СТОРІНКУ НА ІНФОРМАЦІЙНІЙ СУПЕРМАГІСТРАЛІ *** ТИ ЗАРАЗ СЕРФИШ ВСЕСВІТНЮ ПАВУТИНУ *** ЗАЛИШ ЗАПИС У МОЇЙ ГОСТЬОВІЙ КНИЗІ *** C# РУЛИТЬ ***</span></div>
 
@@ -698,10 +697,15 @@
   <nav class="taskbar" id="taskbar" aria-label="Панель завдань" hidden>
     <button type="button" class="start" id="start-button" aria-expanded="false" aria-controls="start-menu"><span class="start-logo" aria-hidden="true"></span> Пуск</button>
     <div class="tasks" id="tasks" role="group" aria-label="Згорнуті вікна"></div>
-    <span class="tray">
+    <div class="tray">
+      <nav class="lang" aria-label="Мова">
+        <a href="/" hreflang="en" lang="en" title="English"><img src="/img/flag-gb.svg" alt="English"></a>
+        <a href="/ua/" hreflang="uk" aria-current="page" title="Українська"><img src="/img/flag-ua.svg" alt="Українська"></a>
+      </nav>
+      <button type="button" id="motion-toggle"><svg viewBox="0 0 20 16" aria-hidden="true"><path d="M10 0L12.5 5.5 18 8 12.5 10.5 10 16 7.5 10.5 2 8 7.5 5.5Z" fill="#ffdd00" stroke="#000"/><path class="motion-x" d="M5 4L15 12M15 4L5 12" stroke="#cc0000" stroke-width="2.5"/></svg></button>
       <button type="button" id="volume-button" aria-label="Гучність" title="Гучність" aria-expanded="false" aria-controls="volume-panel"><svg viewBox="0 0 20 16" aria-hidden="true"><path d="M1 5H5L10 1V15L5 11H1Z" fill="#ffdd00" stroke="#000"/><path class="volume-waves" d="M13 5Q15 8 13 11M15.5 3Q19 8 15.5 13" fill="none" stroke="#000" stroke-width="1.5"/><path class="volume-x" d="M12 4L19 12M19 4L12 12" stroke="#cc0000" stroke-width="2.5"/></svg></button>
       <button type="button" id="clock" title="Час у Києві. Натисни, щоб змінити" aria-expanded="false" aria-controls="time-panel"></button>
-    </span>
+    </div>
   </nav>
   <div class="volume-panel" id="volume-panel" role="group" aria-labelledby="volume-title" hidden>
     <b id="volume-title">Гучність</b>

@@ -364,13 +364,15 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
 
 .tray { flex: none; display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 8px 0 4px; border: 2px inset #fff; }
 .taskbar .tray button { display: grid; place-items: center; height: 24px; padding: 0; background: none; border: 0; }
-#volume-button { width: 24px; }
+#volume-button, #motion-toggle { width: 24px; }
 #clock:hover { text-decoration: underline; }
 .taskbar .tray button:focus-visible { outline: 1px dotted #000; }
 .tray svg { display: block; width: 20px; height: 16px; }
 .volume-x { display: none; }
 .muted .volume-x { display: inline; }
 .muted .volume-waves { display: none; }
+.motion-x { display: none; }
+.no-motion .motion-x { display: inline; }
 
 .volume-panel, .time-panel {
   position: fixed;
@@ -1002,7 +1004,7 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
   83% { transform: translate(-3px, 2px); }
 }
 
-/* Motion off: by the button at the top, or by the system setting unless the button turned it back on. */
+/* Motion off: by the star in the tray, or by the system setting unless the star turned it back on. */
 .no-motion *, .no-motion *::before, .no-motion *::after { animation: none !important; transition: none !important; }
 .no-motion .marquee span { padding-left: 0; white-space: normal; }
 .no-motion .marquee { text-align: center; }
@@ -1013,10 +1015,6 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
   html:not(.motion-on) .marquee { text-align: center; }
 }
 
-.topbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
-.topbar .lang { margin-bottom: 0; }
-.motion-toggle { min-width: 0; padding: 3px 10px; font-size: 12px; }
-
 /* Hidden until it gets keyboard focus. */
 .skip { position: absolute; left: 8px; top: -100px; z-index: 100; padding: 6px 12px; background: #ffff00; color: #000; font-weight: bold; }
 .skip:focus { top: 8px; }
@@ -1025,7 +1023,7 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
 .window .bar h2:focus-visible { outline: 2px dotted #fff; outline-offset: 2px; }
 main:focus { outline: none; }
 
-/* Language flags in the top right, like every homepage in 1999. */
+/* Language flags in the tray. With no script there is no taskbar, so they sit in the top right instead. */
 .lang {
   display: flex;
   justify-content: flex-end;
@@ -1040,3 +1038,6 @@ main:focus { outline: none; }
 .lang a:hover { background: #ffff00; }
 .lang a[aria-current="page"] { border-style: inset; background: #ffff00; }
 .lang img { display: block; width: 27px; height: 18px; }
+.tray .lang { gap: 2px; margin-bottom: 0; }
+.tray .lang a { padding: 1px; }
+.tray .lang img { width: 21px; height: 14px; }
