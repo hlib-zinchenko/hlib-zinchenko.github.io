@@ -1215,7 +1215,7 @@
     }
   });
 
-  // Minesweeper, a modal that only the Start menu opens, with the three classic levels and a best time for each.
+  // Minesweeper, a modal opened from the Start menu or by WINMINE in DOS, with the three classic levels and a best time for each.
   // The mines are laid after the first click and never around it, so every game starts with an opening.
   // Right-click, F or Flag mode marks a mine, and clicking a number with all its flags in place opens the squares around it.
   // Closing the window pauses the clock. It lives in a modal, so the result is shown there: a toast would stay behind it.
@@ -1272,6 +1272,7 @@
   let minesTimer;
   let minesStarted = 0;
   let minesPausedAt = 0;
+  let minesReturnTo;
   let currentCell;
 
   const readBest = () => {
@@ -1472,8 +1473,8 @@
   minesFlag.addEventListener("click", () => {
     minesFlag.setAttribute("aria-pressed", minesFlag.getAttribute("aria-pressed") !== "true");
   });
-  minesButton.addEventListener("click", () => {
-    toggleStartMenu(false);
+  const openMines = (returnTo) => {
+    minesReturnTo = returnTo;
     minesDialog.showModal();
     if (minesPausedAt) {
       minesStarted += Date.now() - minesPausedAt;
@@ -1481,15 +1482,19 @@
       startMinesClock();
     }
     currentCell.button.focus();
+  };
+  minesButton.addEventListener("click", () => {
+    toggleStartMenu(false);
+    openMines(startButton);
   });
   document.getElementById("mines-ok").addEventListener("click", () => minesDialog.close());
-  // The Start menu is gone by now, so the focus can't go back to the item that opened the window.
+  // By hand, because the Start menu is gone by now and the item that opened the window with it.
   minesDialog.addEventListener("close", () => {
     if (minesLaid && !minesOver) {
       clearInterval(minesTimer);
       minesPausedAt = Date.now();
     }
-    startButton.focus();
+    minesReturnTo.focus();
   });
   buildMines();
 
@@ -1594,8 +1599,10 @@
     ["CHEATS.TXT", "#cheats .notepad"],
     ["COOKBOOK.HLP", "#cookbook .notepad"],
   ].map(([name, selector]) => ({ name, source: document.querySelector(selector) }));
-  // The one file that isn't part of this page: running it leaves for the 2077 version.
+  // Two files that aren't part of this page. Running this one leaves for the 2077 version.
   FILES.push({ name: "2077.EXE", href: "/2077/", size: 2077, date: "01-01-77" });
+  // This one opens Minesweeper. On a phone the focus can't go back to the prompt, or its keyboard would pop up again.
+  FILES.push({ name: "WINMINE.EXE", run: () => openMines(matchMedia("(pointer: coarse)").matches ? dosScreen : dosInput), size: 24576, date: "08-24-95" });
 
   // By hand, because innerText only works on what's on screen, and a closed window isn't.
   const toText = (node) => {
@@ -1626,6 +1633,7 @@
 
   const runProgram = (file) => {
     print(dosText.running(file.name));
+    if (file.run) return file.run();
     if (file.href) {
       setTimeout(() => { location.href = file.href; }, 800);
       return;
