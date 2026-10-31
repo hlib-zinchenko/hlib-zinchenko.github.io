@@ -308,10 +308,10 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
 .book-photo img { display: block; width: 150px; height: auto; }
 
 /* Net links */
-.webring { margin: 8px 0 28px; padding: 16px; border-top: 1px solid var(--red); border-bottom: 1px solid var(--red); text-align: center; scroll-margin-top: 16px; }
+.webring { margin: 8px 0 28px; padding: 16px; border-top: 1px solid var(--red); border-bottom: 1px solid var(--red); text-align: center; }
 .webring b { font: 900 15px var(--head); letter-spacing: 3px; color: var(--red); }
 .webring p { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 24px; margin: 10px 0; font: 15px var(--mono); }
-.guestbook { font-weight: 700; }
+.no-socials { margin: 12px 0 0; color: var(--muted); font-size: 14px; }
 
 /* Footer */
 footer { text-align: center; }

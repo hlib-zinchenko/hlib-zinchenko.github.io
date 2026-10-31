@@ -629,10 +629,11 @@ table.stack td { background: #ffffcc; }
   border: 3px ridge #ff00ff;
 }
 
-.guestbook {
-  display: inline-block;
-  margin-top: 6px;
-  font-size: 1.15rem;
+.no-socials {
+  margin: 12px 0 0;
+  font-size: 13px;
+  font-style: italic;
+  color: #555;
 }
 
 .business {

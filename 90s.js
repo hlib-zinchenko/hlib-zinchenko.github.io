@@ -1311,6 +1311,7 @@
     ["FREE_SOFTWARE.ZIP", "#oss .body"],
     ["MY_SKILLZ.XLS", "#stack .body"],
     ["LIKES.INI", "#hobbies .body"],
+    ["FAVORITES.LNK", "#links .body"],
     ["FACTS.TXT", "#facts"],
     ["HIRE_ME.EXE", "#hire-me"],
     ["CHEATS.TXT", "#cheats .notepad"],
