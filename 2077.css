@@ -304,6 +304,8 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
 .book-toc button:focus-visible { outline: 2px solid var(--yellow); outline-offset: -2px; }
 .book-dots { flex: 1 0 12px; border-bottom: 1px dotted currentColor; }
 .dialog .content .book-folio { margin: 18px 0 0; color: var(--muted); font: 14px var(--mono); text-align: center; }
+.book-photo { float: right; margin: 0 0 8px 14px; padding: 6px; border: 1px solid rgba(0, 240, 255, 0.4); background: #000; }
+.book-photo img { display: block; width: 150px; height: auto; }
 
 /* Net links */
 .webring { margin: 8px 0 28px; padding: 16px; border-top: 1px solid var(--red); border-bottom: 1px solid var(--red); text-align: center; scroll-margin-top: 16px; }

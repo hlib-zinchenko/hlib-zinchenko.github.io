@@ -345,38 +345,16 @@
   showJukebox(0, false);
   jukebox.hidden = !window.AudioContext;
 
-  // "Best viewed in Netscape 4.0": reads the browser's own name and sends it nowhere.
-  // The order matters: Edge and Opera also say Chrome, and Chrome also says Safari.
-  const BROWSERS = [
-    [/Edg(e|A|iOS)?\//, "Edge"],
-    [/OPR\/|OPiOS\//, "Opera"],
-    [/Vivaldi\//, "Vivaldi"],
-    [/SamsungBrowser\//, "Samsung Internet"],
-    [/Firefox\/|FxiOS\//, "Firefox"],
-    [/Chrome\/|CriOS\//, "Chrome"],
-    [/Safari\//, "Safari"],
-  ];
-  const SNIFFER_TEXT = {
-    en: {
-      future: (name) => `You're on ${name}, a browser from the FUTURE. Best viewed in Netscape 4.0.`,
-      unknown: "You're on a browser from the FUTURE. Best viewed in Netscape 4.0.",
-      robot: "You're a ROBOT. Greetings, fellow robot! Your note is at C:\\> HIRE_ME.EXE.",
-    },
-    uk: {
-      future: (name) => `Ти в ${name}, браузері з МАЙБУТНЬОГО. Найкраще дивитися в Netscape 4.0.`,
-      unknown: "Ти в браузері з МАЙБУТНЬОГО. Найкраще дивитися в Netscape 4.0.",
-      robot: "Ти РОБОТ. Вітаю, колего-роботе! Твоя записка в C:\\> HIRE_ME.EXE.",
-    },
+  // Only robots get a line here: reads the browser's own name and sends it nowhere.
+  const ROBOT_NOTE = {
+    en: "You're a ROBOT. Greetings, fellow robot! Your note is at C:\\> HIRE_ME.EXE.",
+    uk: "Ти РОБОТ. Вітаю, колего-роботе! Твоя записка в C:\\> HIRE_ME.EXE.",
   };
-  const snifferText = SNIFFER_TEXT[document.documentElement.lang] ?? SNIFFER_TEXT.en;
-  const sniff = (agent, isRobot) => {
-    if (isRobot || /bot|crawl|spider|headless/i.test(agent)) return snifferText.robot;
-    const browser = BROWSERS.find(([pattern]) => pattern.test(agent));
-    return browser ? snifferText.future(browser[1]) : snifferText.unknown;
-  };
-  const sniffer = document.getElementById("sniffer");
-  sniffer.textContent = sniff(navigator.userAgent, navigator.webdriver);
-  sniffer.hidden = false;
+  if (navigator.webdriver || /bot|crawl|spider|headless/i.test(navigator.userAgent)) {
+    const sniffer = document.getElementById("sniffer");
+    sniffer.textContent = ROBOT_NOTE[document.documentElement.lang] ?? ROBOT_NOTE.en;
+    sniffer.hidden = false;
+  }
 
   // Windows: × hides a window, the MeNu brings it back, and closing them all shows a dialog.
   // _ sends a window to the taskbar and □ fills the screen with it. A minimized window is hidden too,
@@ -1025,7 +1003,7 @@
       BIGBANG: "Every window nearby goes BOOM!!!",
       LEAVEMEALONE: "Wanted level gone.",
       ASPIRINE: "Full health: every window is back.",
-      RUBBISHCAR: "We had touched the forbidden. It also takes the bullet holes away.",
+      RUBBISHCAR: "We were never meant to know this. It also takes the bullet holes away.",
     },
     uk: {
       activated: "ЧИТ АКТИВОВАНО",
@@ -1039,7 +1017,7 @@
       BIGBANG: "Усі вікна поруч — БАБАХ!!!",
       LEAVEMEALONE: "Без розшуку.",
       ASPIRINE: "Повне здоров'я: усі вікна повернулися.",
-      RUBBISHCAR: "Ми торкнулися забороненого. А ще він забирає сліди від куль.",
+      RUBBISHCAR: "Ми не мали цього знати. А ще він забирає сліди від куль.",
     },
   };
   const cheatText = CHEAT_TEXT[document.documentElement.lang] ?? CHEAT_TEXT.en;
@@ -1317,13 +1295,12 @@
   const dosText = DOS_TEXT[document.documentElement.lang] ?? DOS_TEXT.en;
 
   const dosSession = document.getElementById("dos-session");
+  const dosScreen = document.getElementById("dos-screen");
   const dosLog = document.getElementById("dos-log");
   const print = (text) => {
     const line = document.createElement("div");
     line.textContent = text;
     dosLog.appendChild(line);
-    // The log just grew, and that must not push the line being typed on off the screen.
-    if (document.activeElement === dosInput) dosInput.scrollIntoView({ block: "nearest" });
     return line;
   };
 
@@ -1501,7 +1478,7 @@
     if (awaitingAnswer) answer(typed);
     else run(typed);
     // From the command down, not the very end: a long TYPE should open on its first line.
-    dosLog.scrollTop = echo.isConnected ? echo.offsetTop : 0;
+    dosScreen.scrollTop = echo.isConnected ? echo.offsetTop : 0;
   });
   dosInput.addEventListener("keydown", (e) => {
     if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
@@ -1509,7 +1486,7 @@
     historyAt = Math.max(-1, Math.min(historyAt + (e.key === "ArrowUp" ? 1 : -1), typedBefore.length - 1));
     dosInput.value = typedBefore[historyAt] ?? "";
   });
-  dosSession.addEventListener("click", () => {
+  [dosLog, dosSession].forEach((part) => part.addEventListener("click", () => {
     if (!getSelection().toString()) dosInput.focus();
-  });
+  }));
 })();
