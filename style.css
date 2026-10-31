@@ -224,3 +224,51 @@ footer p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
 }
+
+/* Cmd+P gives a plain CV: always light, no web-only parts, and links that still work on paper. */
+@page { size: A4; margin: 13mm 15mm; }
+
+@media print {
+  :root {
+    --bg: #fff;
+    --ink: #000;
+    --muted: #555;
+    --rule: #bbb;
+    --accent: #3d2a8f;
+    --code-bg: transparent;
+    color-scheme: light;
+  }
+
+  body { padding: 0; font-size: 9.5pt; line-height: 1.38; }
+  main, footer { max-width: none; }
+  main { padding: 0; }
+
+  .fun-link, footer, section[aria-labelledby="ukraine"] { display: none; }
+
+  .eyebrow, h2, .meta, .stack dt, .timeline .when { font-size: 8.5pt; }
+  .eyebrow { margin-bottom: 0.2rem; }
+  h1 { font-size: 21pt; }
+  .role { margin-top: 0.1rem; font-size: 11pt; }
+  .lede { margin-top: 0.4rem; max-width: none; font-size: inherit; }
+
+  .links { display: grid; grid-template-columns: max-content 1fr; gap: 0 2rem; margin-top: 0.4rem; }
+  .links::after { content: "hzinchenko.com"; }
+  .links a { padding: 0; border: 0; font-size: inherit; }
+  .links a::after { content: none; }
+  .links a[href^="http"]::after { content: attr(href); color: inherit; font-size: inherit; }
+
+  section { margin-top: 0.8rem; }
+  h2 { margin-bottom: 0.3rem; padding-bottom: 0.15rem; break-after: avoid; }
+  .section-note { margin-bottom: 0.3rem; }
+  .now li + li, .timeline li + li { margin-top: 0.15rem; }
+  .timeline li { grid-template-columns: 5.5rem 1fr; gap: 0.75rem; }
+  .languages { margin-top: 0.3rem; }
+  .project + .project { margin-top: 0.5rem; }
+  .project h3 { font-size: inherit; }
+  code { padding: 0; }
+  .project p, .project .meta, .project .outcome { margin-top: 0.1rem; }
+  .project .outcome { font-size: 8.5pt; }
+  .stack { gap: 0.1rem 1rem; }
+
+  .project, .timeline li, .now li { break-inside: avoid; }
+}

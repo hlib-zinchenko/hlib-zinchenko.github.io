@@ -731,9 +731,34 @@
   <nav class="start-menu" id="start-menu" aria-label="Start menu" hidden>
     <span class="start-stripe" aria-hidden="true">HLIB 94</span>
     <div class="start-items" id="start-items">
+      <button type="button" id="mines-button">Minesweeper</button>
       <button type="button" id="shut-down">Shut Down...</button>
     </div>
   </nav>
+  <dialog class="dialog mines" id="mines" aria-labelledby="mines-title">
+    <div class="bar" id="mines-title">Minesweeper</div>
+    <div class="mines-levels" role="radiogroup" aria-label="Level">
+      <label><input type="radio" name="mines-level" value="beginner"> Beginner</label>
+      <label><input type="radio" name="mines-level" value="intermediate"> Intermediate</label>
+      <label><input type="radio" name="mines-level" value="expert"> Expert</label>
+    </div>
+    <div class="mines-game">
+      <div class="mines-top">
+        <span class="mines-led" id="mines-left" role="status" aria-label="Mines left" title="Mines left">010</span>
+        <button type="button" class="mines-face" id="mines-face" aria-label="New game" title="New game">:-)</button>
+        <span class="mines-led" id="mines-time" role="timer" aria-label="Seconds" title="Seconds">000</span>
+      </div>
+      <div class="mines-board" id="mines-board" role="grid" aria-label="Minefield"></div>
+      <button type="button" class="win-btn" id="mines-flag" aria-pressed="false">Flag mode</button>
+    </div>
+    <p class="mines-status" id="mines-status" role="status"></p>
+    <p class="mines-help">Click a square to open it. Right-click, or press F, to flag a mine. On a phone, turn on Flag mode.</p>
+    <dl class="mines-best" aria-label="Best times">
+      <dt>Hlib</dt><dd>999 seconds (was in a meeting)</dd>
+      <dt>You</dt><dd id="mines-best">---</dd>
+    </dl>
+    <div class="actions"><button type="button" id="mines-ok">OK</button></div>
+  </dialog>
   <dialog class="shutdown" id="shutdown" aria-label="Shut Down...">
     <p id="shutdown-wait">Please wait while your computer shuts down.</p>
     <p id="shutdown-safe" hidden>It is now safe to turn off your computer.</p>

@@ -5,15 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Not found · Hlib Zinchenko</title>
   <meta name="robots" content="noindex">
-  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0000aa">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/style.css">
+  <style>
+    html { background: #0000aa; }
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100dvh;
+      margin: 0;
+      padding: 16px;
+      box-sizing: border-box;
+      color: #fff;
+      font: 16px/1.5 "Courier New", Courier, monospace;
+    }
+    main { max-width: 42rem; }
+    h1 { width: fit-content; margin: 0 auto 1.5em; padding: 0 0.5em; background: #aaa; color: #0000aa; font: inherit; }
+    p { margin: 0 0 1.5em; }
+    ul { margin: 0 0 1.5em; padding: 0; list-style: none; }
+    li { display: grid; grid-template-columns: 2ch 1fr; }
+    li::before { content: "*"; }
+    .continue { text-align: center; }
+    a { color: inherit; text-decoration: none; }
+    a:hover, a:focus-visible { background: #fff; color: #0000aa; outline: none; }
+    .cursor { animation: blink 1s steps(2, jump-none) infinite; }
+    .no-motion .cursor { animation: none; }
+    @keyframes blink { to { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+  </style>
 </head>
 <body>
-  <main>
-    <p class="eyebrow">404</p>
-    <h1>Nothing here.</h1>
-    <p class="lede"><a href="/">Back to the home page</a></p>
+  <main lang="en">
+    <h1>HLIB 94</h1>
+    <p>A fatal exception 404 has occurred at 0028:C0FFEE94 in VXD HOMEPAGE(01) + 00001994. The page you asked for does not exist, so the current application will be terminated.</p>
+    <ul>
+      <li>Press any key to go back to the home page.</li>
+      <li>If you typed the address yourself, check it for typos.</li>
+      <li>If you followed a link, it's my fault. Sorry!!!</li>
+    </ul>
+    <p class="continue"><a href="/">Press any key to continue <span class="cursor" aria-hidden="true">_</span></a></p>
   </main>
+  <main lang="uk" hidden>
+    <h1>HLIB 94</h1>
+    <p>Сталася фатальна помилка 404 за адресою 0028:C0FFEE94 у VXD HOMEPAGE(01) + 00001994. Такої сторінки не існує, тому поточну програму буде завершено.</p>
+    <ul>
+      <li>Натисни будь-яку клавішу, щоб повернутися на головну.</li>
+      <li>Якщо адресу введено вручну, перевір її.</li>
+      <li>Якщо це було посилання, то винен я. Вибач!!!</li>
+    </ul>
+    <p class="continue"><a href="/ua/">Натисни будь-яку клавішу, щоб продовжити <span class="cursor" aria-hidden="true">_</span></a></p>
+  </main>
+  <script>
+    // One page for every missing address, so anything under /ua/ gets the Ukrainian text.
+    if (/^\/ua(\/|$)/.test(location.pathname)) {
+      document.documentElement.lang = "uk";
+      document.title = "Не знайдено · Гліб Зінченко";
+      document.querySelectorAll("main").forEach((text) => { text.hidden = !text.hidden; });
+    }
+    try {
+      if (localStorage.getItem("hz90s-motion") === "off") document.documentElement.classList.add("no-motion");
+    } catch {}
+    const home = document.querySelector("main:not([hidden]) a").href;
+    const goHome = () => { location.href = home; };
+    // Any key, but browser shortcuts and Tab still do their own job.
+    addEventListener("keydown", (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || ["Tab", "Shift", "Control", "Meta", "Alt"].includes(e.key)) return;
+      goHome();
+    });
+    addEventListener("click", goHome);
+  </script>
 </body>
 </html>

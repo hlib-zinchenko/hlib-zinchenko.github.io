@@ -731,9 +731,34 @@
   <nav class="start-menu" id="start-menu" aria-label="Меню «Пуск»" hidden>
     <span class="start-stripe" aria-hidden="true">HLIB 94</span>
     <div class="start-items" id="start-items">
+      <button type="button" id="mines-button">Сапер</button>
       <button type="button" id="shut-down">Завершення роботи...</button>
     </div>
   </nav>
+  <dialog class="dialog mines" id="mines" aria-labelledby="mines-title">
+    <div class="bar" id="mines-title">Сапер</div>
+    <div class="mines-levels" role="radiogroup" aria-label="Рівень">
+      <label><input type="radio" name="mines-level" value="beginner"> Новачок</label>
+      <label><input type="radio" name="mines-level" value="intermediate"> Любитель</label>
+      <label><input type="radio" name="mines-level" value="expert"> Профі</label>
+    </div>
+    <div class="mines-game">
+      <div class="mines-top">
+        <span class="mines-led" id="mines-left" role="status" aria-label="Залишилось мін" title="Залишилось мін">010</span>
+        <button type="button" class="mines-face" id="mines-face" aria-label="Нова гра" title="Нова гра">:-)</button>
+        <span class="mines-led" id="mines-time" role="timer" aria-label="Секунди" title="Секунди">000</span>
+      </div>
+      <div class="mines-board" id="mines-board" role="grid" aria-label="Мінне поле"></div>
+      <button type="button" class="win-btn" id="mines-flag" aria-pressed="false">Режим прапорця</button>
+    </div>
+    <p class="mines-status" id="mines-status" role="status"></p>
+    <p class="mines-help">Клікни на клітинку, щоб відкрити її. Правий клік або клавіша F ставить прапорець на міну. На телефоні увімкни режим прапорця.</p>
+    <dl class="mines-best" aria-label="Найкращий час">
+      <dt>Гліб</dt><dd>999 секунд (був на мітингу)</dd>
+      <dt>Ти</dt><dd id="mines-best">---</dd>
+    </dl>
+    <div class="actions"><button type="button" id="mines-ok">OK</button></div>
+  </dialog>
   <dialog class="shutdown" id="shutdown" aria-label="Завершення роботи...">
     <p id="shutdown-wait">Зачекай, комп'ютер вимикається.</p>
     <p id="shutdown-safe" hidden>Тепер комп'ютер можна вимкнути.</p>

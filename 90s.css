@@ -793,6 +793,65 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
 
 #about .body { display: flow-root; }
 
+/* Minesweeper. The window follows the board, and a board too wide for a phone scrolls inside it.
+   The cells grow a little where a finger is the pointer. */
+dialog.dialog.mines {
+  --mine-cell: 26px;
+  color-scheme: light;
+  width: min(max(420px, calc(var(--mine-columns) * var(--mine-cell) + 56px)), calc(100vw - 16px));
+  max-width: none;
+  max-height: calc(100dvh - 16px);
+  overflow-y: auto;
+}
+@media (pointer: coarse) { dialog.dialog.mines { --mine-cell: 30px; } }
+.mines-levels { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; margin: 10px 8px 0; font-size: 14px; }
+.mines-game {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  width: fit-content;
+  max-width: calc(100% - 16px);
+  margin: 8px auto;
+  padding: 8px;
+  border: 3px outset #fff;
+}
+.mines-game .win-btn { min-width: 0; padding: 3px 6px; font-size: 12px; }
+.mines-game .win-btn[aria-pressed="true"] { border-style: inset; background: #ffff00; }
+.mines-top { display: flex; justify-content: space-between; align-items: center; padding: 4px; border: 2px inset #fff; }
+.mines-led { min-width: 3ch; padding: 0 4px; background: #000; color: #ff0000; font: bold 22px/1.2 "Courier New", monospace; text-align: right; }
+.dialog .mines-face { min-width: 0; width: 40px; height: 32px; padding: 0; font: bold 15px "Courier New", monospace; }
+.mines-board { display: grid; grid-template-columns: repeat(var(--mine-columns), var(--mine-cell)); overflow-x: auto; border: 3px inset #fff; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.mines-board [role="row"] { display: contents; }
+.dialog .mine-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  width: var(--mine-cell);
+  height: var(--mine-cell);
+  padding: 0;
+  border: 3px outset #fff;
+  outline: 0;
+  font: bold 16px "Courier New", monospace;
+}
+.dialog .mine-cell:focus-visible { outline: 2px dotted #000; outline-offset: -3px; box-shadow: none; }
+.mine-cell svg { display: block; width: 18px; height: 18px; }
+.dialog .mine-cell.open { border: 1px solid #808080; cursor: default; }
+.dialog .mine-cell.hit { background: #ff0000; }
+.mine-cell.wrong::after { content: "X"; position: absolute; color: #ff0000; font-size: 20px; }
+.dialog .mine-cell[data-near="1"] { color: #0000ff; }
+.dialog .mine-cell[data-near="2"] { color: #008000; }
+.dialog .mine-cell[data-near="3"] { color: #ff0000; }
+.dialog .mine-cell[data-near="4"] { color: #000080; }
+.dialog .mine-cell[data-near="5"] { color: #800000; }
+.dialog .mine-cell[data-near="6"] { color: #008080; }
+.dialog .mine-cell[data-near="8"] { color: #808080; }
+.mines-status { min-height: 1.3em; margin: 0 12px; font-size: 14px; font-weight: bold; text-align: center; }
+.mines-help { margin: 4px 16px; font-size: 13px; text-align: center; }
+.mines-best { display: grid; grid-template-columns: max-content 1fr; gap: 0 12px; width: fit-content; margin: 8px auto 12px; font-size: 13px; }
+.mines-best dt { font-weight: bold; }
+.mines-best dd { margin: 0; }
+
 /* The MS-DOS Prompt: one black screen with the two static boxes, then the real prompt under them.
    It keeps its size and scrolls as a whole, with the line being typed on stuck to the bottom. */
 .window.dos:not(.maximized) { margin: 14px auto; max-width: 680px; }

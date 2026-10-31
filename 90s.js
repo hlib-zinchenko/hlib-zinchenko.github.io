@@ -514,6 +514,7 @@
   // The Start menu is the MeNu again, so it needs no text or translations of its own.
   const startMenu = document.getElementById("start-menu");
   const shutDownButton = document.getElementById("shut-down");
+  const minesButton = document.getElementById("mines-button");
   const toggleStartMenu = (open) => {
     startMenu.hidden = !open;
     startButton.setAttribute("aria-expanded", open);
@@ -523,7 +524,7 @@
     item.textContent = link.textContent.replace("» ", "");
     if (link.hash) item.addEventListener("click", () => openSection(link));
     item.addEventListener("click", () => toggleStartMenu(false));
-    shutDownButton.before(item);
+    minesButton.before(item);
   });
   startButton.addEventListener("click", () => {
     toggleVolumePanel(false);
@@ -1213,6 +1214,284 @@
       activate(code);
     }
   });
+
+  // Minesweeper, a modal that only the Start menu opens, with the three classic levels and a best time for each.
+  // The mines are laid after the first click and never around it, so every game starts with an opening.
+  // Right-click, F or Flag mode marks a mine, and clicking a number with all its flags in place opens the squares around it.
+  // Closing the window pauses the clock. It lives in a modal, so the result is shown there: a toast would stay behind it.
+  const MINES_LEVELS = {
+    beginner: { columns: 9, rows: 9, mines: 10 },
+    intermediate: { columns: 16, rows: 16, mines: 40 },
+    expert: { columns: 30, rows: 16, mines: 99 },
+  };
+  const MINES_LEVEL_KEY = "hz90s-mines-level";
+  const MINES_BEST_KEY = "hz90s-mines-best";
+  const MINES_TEXT = {
+    en: {
+      cell: (row, column, state) => `Row ${row}, column ${column}: ${state}`,
+      hidden: "hidden",
+      flagged: "flagged",
+      mine: "mine",
+      clear: "clear",
+      won: (seconds) => `YOU WIN!!! ${seconds} seconds. Faster than Hlib!!!`,
+      lost: "BOOM!!! Press the smiley to try again.",
+    },
+    uk: {
+      cell: (row, column, state) => `Рядок ${row}, стовпець ${column}: ${state}`,
+      hidden: "закрито",
+      flagged: "прапорець",
+      mine: "міна",
+      clear: "порожньо",
+      won: (seconds) => `ПЕРЕМОГА!!! Секунд: ${seconds}. Швидше за Гліба!!!`,
+      lost: "БАБАХ!!! Натисни смайлик, щоб спробувати ще.",
+    },
+  };
+  const minesText = MINES_TEXT[document.documentElement.lang] ?? MINES_TEXT.en;
+  const MINE_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1V15M1 8H15M3 3L13 13M13 3L3 13" stroke="#000" stroke-width="1.5"/><circle cx="8" cy="8" r="5"/><rect x="5" y="5" width="2" height="2" fill="#fff"/></svg>';
+  const FLAG_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 1V12" stroke="#000" stroke-width="2"/><path d="M9 1V9L1 5Z" fill="#f00"/><path d="M4 12H15V15H4Z"/></svg>';
+  const minesDialog = document.getElementById("mines");
+  const minesFace = document.getElementById("mines-face");
+  const minesLeft = document.getElementById("mines-left");
+  const minesTime = document.getElementById("mines-time");
+  const minesBest = document.getElementById("mines-best");
+  const minesFlag = document.getElementById("mines-flag");
+  const minesBoard = document.getElementById("mines-board");
+  const minesStatus = document.getElementById("mines-status");
+  const minesLevels = [...document.querySelectorAll('[name="mines-level"]')];
+  const led = (n) => (n < 0 ? `-${String(-n).padStart(2, "0")}` : String(n).padStart(3, "0"));
+
+  const cells = [];
+  let minesLevel = "beginner";
+  try {
+    const saved = localStorage.getItem(MINES_LEVEL_KEY);
+    if (Object.hasOwn(MINES_LEVELS, saved)) minesLevel = saved;
+  } catch {}
+  let minesLaid = false;
+  let minesOver = null;
+  let hitCell = null;
+  let minesTimer;
+  let minesStarted = 0;
+  let minesPausedAt = 0;
+  let currentCell;
+
+  const readBest = () => {
+    try { return Number(localStorage.getItem(`${MINES_BEST_KEY}-${minesLevel}`)) || null; } catch { return null; }
+  };
+  const around = ({ row, column }) => cells.filter((c) => (c.row !== row || c.column !== column)
+    && Math.abs(c.row - row) <= 1 && Math.abs(c.column - column) <= 1);
+
+  const showFace = () => {
+    minesFace.textContent = { won: "B-)", lost: "X-(" }[minesOver] ?? ":-)";
+  };
+
+  const paintCell = (cell) => {
+    const shownMine = minesOver === "lost" && cell.mine && !cell.flag;
+    const button = cell.button;
+    button.classList.toggle("open", cell.open || shownMine);
+    button.classList.toggle("hit", cell === hitCell);
+    button.classList.toggle("wrong", minesOver === "lost" && cell.flag && !cell.mine);
+    button.dataset.near = cell.open ? cell.near : "";
+    if (shownMine) button.innerHTML = MINE_ICON;
+    else if (cell.flag) button.innerHTML = FLAG_ICON;
+    else button.textContent = cell.open && cell.near ? cell.near : "";
+    const state = shownMine ? minesText.mine
+      : cell.flag ? minesText.flagged
+      : !cell.open ? minesText.hidden
+      : cell.near || minesText.clear;
+    button.setAttribute("aria-label", minesText.cell(cell.row + 1, cell.column + 1, state));
+  };
+
+  const showMinesLeft = () => {
+    minesLeft.textContent = led(MINES_LEVELS[minesLevel].mines - cells.filter((c) => c.flag).length);
+  };
+
+  const finishMines = (result) => {
+    clearInterval(minesTimer);
+    minesOver = result;
+    showFace();
+    cells.forEach(paintCell);
+    showMinesLeft();
+  };
+
+  const winMines = () => {
+    cells.filter((c) => c.mine).forEach((c) => { c.flag = true; });
+    finishMines("won");
+    const seconds = Math.max(1, Number(minesTime.textContent));
+    if (seconds < (readBest() ?? Infinity)) {
+      minesBest.textContent = seconds;
+      try { localStorage.setItem(`${MINES_BEST_KEY}-${minesLevel}`, seconds); } catch {}
+    }
+    minesStatus.textContent = minesText.won(seconds);
+  };
+
+  const loseMines = (cell) => {
+    hitCell = cell;
+    finishMines("lost");
+    minesStatus.textContent = minesText.lost;
+  };
+
+  const startMinesClock = () => {
+    minesTimer = setInterval(() => {
+      minesTime.textContent = led(Math.min(999, Math.floor((Date.now() - minesStarted) / 1000)));
+    }, 1000);
+  };
+
+  const layMines = (first) => {
+    const safe = [first, ...around(first)];
+    const free = cells.filter((c) => !safe.includes(c));
+    for (let left = MINES_LEVELS[minesLevel].mines; left > 0; left--) {
+      free.splice(Math.floor(Math.random() * free.length), 1)[0].mine = true;
+    }
+    cells.forEach((c) => { c.near = around(c).filter((n) => n.mine).length; });
+    minesLaid = true;
+    minesStarted = Date.now();
+    startMinesClock();
+  };
+
+  // A square with no mines around it opens its neighbours too, so one click can clear half the board.
+  const openFrom = (start) => {
+    const queue = [start];
+    while (queue.length) {
+      const cell = queue.pop();
+      if (cell.open || cell.flag) continue;
+      cell.open = true;
+      paintCell(cell);
+      if (!cell.near) queue.push(...around(cell));
+    }
+  };
+
+  const checkMinesWon = () => {
+    if (cells.every((c) => c.open || c.mine)) winMines();
+  };
+
+  const toggleFlag = (cell) => {
+    if (minesOver || cell.open) return;
+    cell.flag = !cell.flag;
+    paintCell(cell);
+    showMinesLeft();
+  };
+
+  const clickCell = (cell) => {
+    if (minesOver) return;
+    if (cell.open) {
+      const near = around(cell);
+      if (cell.near !== near.filter((n) => n.flag).length) return;
+      const hit = near.find((n) => n.mine && !n.flag);
+      if (hit) return loseMines(hit);
+      near.forEach((n) => openFrom(n));
+      checkMinesWon();
+      return;
+    }
+    if (minesFlag.getAttribute("aria-pressed") === "true") return toggleFlag(cell);
+    if (cell.flag) return;
+    if (!minesLaid) layMines(cell);
+    if (cell.mine) return loseMines(cell);
+    openFrom(cell);
+    checkMinesWon();
+  };
+
+  const newMines = () => {
+    clearInterval(minesTimer);
+    minesLaid = false;
+    minesOver = null;
+    hitCell = null;
+    minesPausedAt = 0;
+    cells.forEach((c) => Object.assign(c, { mine: false, flag: false, open: false, near: 0 }));
+    cells.forEach(paintCell);
+    minesTime.textContent = led(0);
+    minesStatus.textContent = "";
+    showMinesLeft();
+    showFace();
+  };
+
+  const moveToCell = (cell) => {
+    currentCell.button.tabIndex = -1;
+    currentCell = cell;
+    cell.button.tabIndex = 0;
+    cell.button.focus();
+  };
+
+  // Keyboard: one Tab stop for the whole board, then the arrows, Enter or Space to open, F to flag.
+  const ARROWS = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
+  const buildMines = () => {
+    const { columns, rows } = MINES_LEVELS[minesLevel];
+    cells.length = 0;
+    minesBoard.replaceChildren();
+    minesDialog.style.setProperty("--mine-columns", columns);
+    for (let row = 0; row < rows; row++) {
+      const rowElement = document.createElement("div");
+      rowElement.setAttribute("role", "row");
+      for (let column = 0; column < columns; column++) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "mine-cell";
+        button.tabIndex = -1;
+        button.setAttribute("role", "gridcell");
+        const cell = { row, column, button };
+        button.addEventListener("click", () => {
+          moveToCell(cell);
+          clickCell(cell);
+        });
+        button.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          toggleFlag(cell);
+        });
+        button.addEventListener("keydown", (e) => {
+          const step = ARROWS[e.key];
+          if (e.code === "KeyF" && !e.ctrlKey && !e.metaKey && !e.altKey) toggleFlag(cell);
+          if (!step) return;
+          e.preventDefault();
+          const next = cells.find((c) => c.row === row + step[0] && c.column === column + step[1]);
+          if (next) moveToCell(next);
+        });
+        cells.push(cell);
+        rowElement.appendChild(button);
+      }
+      minesBoard.appendChild(rowElement);
+    }
+    currentCell = cells[0];
+    currentCell.button.tabIndex = 0;
+    minesBest.textContent = readBest() ?? "---";
+    newMines();
+  };
+
+  minesLevels.forEach((radio) => {
+    radio.checked = radio.value === minesLevel;
+    radio.addEventListener("change", () => {
+      minesLevel = radio.value;
+      try { localStorage.setItem(MINES_LEVEL_KEY, minesLevel); } catch {}
+      buildMines();
+    });
+  });
+  minesBoard.addEventListener("pointerdown", (e) => {
+    if (!minesOver && e.button === 0) minesFace.textContent = ":-O";
+  });
+  document.addEventListener("pointerup", showFace);
+  document.addEventListener("pointercancel", showFace);
+  minesFace.addEventListener("click", newMines);
+  minesFlag.addEventListener("click", () => {
+    minesFlag.setAttribute("aria-pressed", minesFlag.getAttribute("aria-pressed") !== "true");
+  });
+  minesButton.addEventListener("click", () => {
+    toggleStartMenu(false);
+    minesDialog.showModal();
+    if (minesPausedAt) {
+      minesStarted += Date.now() - minesPausedAt;
+      minesPausedAt = 0;
+      startMinesClock();
+    }
+    currentCell.button.focus();
+  });
+  document.getElementById("mines-ok").addEventListener("click", () => minesDialog.close());
+  // The Start menu is gone by now, so the focus can't go back to the item that opened the window.
+  minesDialog.addEventListener("close", () => {
+    if (minesLaid && !minesOver) {
+      clearInterval(minesTimer);
+      minesPausedAt = Date.now();
+    }
+    startButton.focus();
+  });
+  buildMines();
 
   // The prompt under the two static boxes in the MS-DOS window. TYPE reads the real page rather than a copy,
   // so the prompt can't disagree with it, stays in the page's language and also sees closed windows.
