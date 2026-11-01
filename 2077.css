@@ -278,7 +278,11 @@ dialog.dialog.book { height: min(680px, calc(100% - 32px)); }
 dialog.dialog.book[open] { display: flex; flex-direction: column; }
 .book-nav { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 16px 0; }
 .book-nav .btn:disabled { border-color: var(--muted); background: none; color: var(--muted); cursor: default; }
-#cookbook .content.notepad { flex: 1; min-height: 0; overflow-y: auto; }
+#cookbook .content.notepad, #terms .content.notepad { flex: 1; min-height: 0; overflow-y: auto; }
+#terms h3 { margin-top: 0; }
+#terms h4 { margin: 18px 0 4px; font: 700 13px var(--head); letter-spacing: 1px; text-transform: uppercase; color: var(--yellow); }
+#terms h4 + p { margin-top: 0; }
+#terms .actions { flex-wrap: wrap; gap: 8px; }
 .book-page h3 { margin-top: 0; outline: none; }
 .book-page h4 { margin: 18px 0 4px; font: 700 13px var(--head); letter-spacing: 1px; text-transform: uppercase; color: var(--yellow); }
 .book-page p { margin: 8px 0 4px; }

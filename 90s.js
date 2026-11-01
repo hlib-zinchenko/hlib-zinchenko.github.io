@@ -914,6 +914,15 @@
   });
   document.getElementById("cheats-ok").addEventListener("click", () => cheats.close());
 
+  // The same for TERMS.TXT, from the footer and the Start menu. Both of its buttons mean the same thing.
+  const terms = document.getElementById("terms");
+  ["terms-open", "terms-button"].forEach((id) => {
+    document.getElementById(id).addEventListener("click", () => terms.showModal());
+  });
+  terms.querySelectorAll(".actions button").forEach((button) => {
+    button.addEventListener("click", () => terms.close());
+  });
+
   // The cookbook shows one page at a time, the contents or a single recipe, like a Windows Help file.
   const cookbook = document.getElementById("cookbook");
   const bookPages = [...cookbook.querySelectorAll(".book-page")];
@@ -1504,7 +1513,7 @@
     toggleStartMenu(false);
     openedFromStart = true;
   });
-  [cheats, cookbook, minesDialog].forEach((dialog) => {
+  [cheats, cookbook, minesDialog, terms].forEach((dialog) => {
     dialog.addEventListener("close", () => {
       if (openedFromStart) startButton.focus();
       openedFromStart = false;
@@ -1611,6 +1620,7 @@
     ["HIRE_ME.EXE", "#hire-me"],
     ["GTAVC_CHEATS.TXT", "#cheats .notepad"],
     ["COOKBOOK.HLP", "#cookbook .notepad"],
+    ["TERMS.TXT", "#terms .notepad"],
   ].map(([name, selector]) => ({ name, source: document.querySelector(selector) }));
   // Two files that aren't part of this page. Running this one leaves for the 2077 version.
   FILES.push({ name: "2077.EXE", href: "/2077/", size: 2077, date: "01-01-77" });

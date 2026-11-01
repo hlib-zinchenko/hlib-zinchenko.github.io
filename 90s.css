@@ -763,6 +763,12 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
 .dialog .book-nav button:disabled { color: #808080; text-shadow: 1px 1px 0 #fff; cursor: default; }
 .dialog .book-nav button:disabled:active { border-style: outset; }
 #cookbook .content.notepad { flex: 1; min-height: 0; overflow-y: auto; background: #fffff0; font: 16px/1.35 "Times New Roman", Times, serif; }
+#terms .content.notepad { flex: 1; min-height: 0; overflow-y: auto; font: 14px/1.4 "Courier New", Courier, monospace; }
+#terms h3 { margin-top: 16px; font-size: 15px; }
+#terms h3:first-child { margin-top: 0; }
+#terms h3 + p { margin-top: 2px; }
+#terms a { color: #0000ee; }
+#terms .actions button { margin-top: 4px; }
 .book-page h3 { font-family: Arial, Helvetica, sans-serif; outline: none; }
 .book-page h4 { margin: 16px 0 2px; font: bold 15px Arial, Helvetica, sans-serif; }
 .book-page ul, .book-page ol { margin: 4px 0 0; padding-left: 1.4em; }
@@ -885,6 +891,7 @@ dialog.dialog.mines {
 }
 
 .fine { position: relative; text-align: center; font-size: 12px; color: #aaaaff; }
+.fine .cheats-link { color: #00ffff; }
 
 .year {
   padding: 0;

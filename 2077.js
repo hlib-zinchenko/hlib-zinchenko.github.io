@@ -132,6 +132,13 @@
   document.getElementById("cheats-open").addEventListener("click", () => cheats.showModal());
   document.getElementById("cheats-ok").addEventListener("click", () => cheats.close());
 
+  // The terms in the footer. Both of their buttons mean the same thing.
+  const terms = document.getElementById("terms");
+  document.getElementById("terms-open").addEventListener("click", () => terms.showModal());
+  terms.querySelectorAll(".actions button").forEach((button) => {
+    button.addEventListener("click", () => terms.close());
+  });
+
   // The cookbook shows one page at a time: the contents or a single recipe.
   const cookbook = document.getElementById("cookbook");
   const bookPages = [...cookbook.querySelectorAll(".book-page")];
