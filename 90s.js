@@ -515,6 +515,7 @@
   const startMenu = document.getElementById("start-menu");
   const shutDownButton = document.getElementById("shut-down");
   const minesButton = document.getElementById("mines-button");
+  const startPrograms = document.getElementById("start-programs");
   const toggleStartMenu = (open) => {
     startMenu.hidden = !open;
     startButton.setAttribute("aria-expanded", open);
@@ -524,7 +525,7 @@
     item.textContent = link.textContent.replace("» ", "");
     if (link.hash) item.addEventListener("click", () => openSection(link));
     item.addEventListener("click", () => toggleStartMenu(false));
-    minesButton.before(item);
+    startPrograms.before(item);
   });
   startButton.addEventListener("click", () => {
     toggleVolumePanel(false);
@@ -906,9 +907,11 @@
   });
   document.getElementById("worth-ok").addEventListener("click", () => worthAnswer.close());
 
-  // The "cheat codes" link under the Vice City photo opens them in a Notepad dialog.
+  // The "cheat codes" link under the Vice City photo opens them in a Notepad dialog, and so does the Start menu.
   const cheats = document.getElementById("cheats");
-  document.getElementById("cheats-open").addEventListener("click", () => cheats.showModal());
+  ["cheats-open", "cheats-button"].forEach((id) => {
+    document.getElementById(id).addEventListener("click", () => cheats.showModal());
+  });
   document.getElementById("cheats-ok").addEventListener("click", () => cheats.close());
 
   // The cookbook shows one page at a time, the contents or a single recipe, like a Windows Help file.
@@ -987,7 +990,7 @@
     s.addEventListener("animationcancel", done);
   });
 
-  // The cheat codes from CHEATS.TXT, for real: type one anywhere on the page, or at the C:\> prompt.
+  // The cheat codes from GTAVC_CHEATS.TXT, for real: type one anywhere on the page, or at the C:\> prompt.
   // The text lives here, so each page picks its language from <html lang>.
   const CHEAT_TEXT = {
     en: {
@@ -1187,7 +1190,7 @@
   let toastTimer;
 
   const activate = (code) => {
-    // A cheat typed while reading CHEATS.TXT would play behind the open dialog.
+    // A cheat typed while reading GTAVC_CHEATS.TXT would play behind the open dialog.
     document.querySelectorAll("dialog[open]").forEach((d) => d.close());
     CHEATS[code]();
     const missed = !motion && (code === "PANZER" || code === "RUBBISHCAR");
@@ -1483,10 +1486,7 @@
     }
     currentCell.button.focus();
   };
-  minesButton.addEventListener("click", () => {
-    toggleStartMenu(false);
-    openMines(startButton);
-  });
+  minesButton.addEventListener("click", () => openMines(startButton));
   document.getElementById("mines-ok").addEventListener("click", () => minesDialog.close());
   // By hand, because the Start menu is gone by now and the item that opened the window with it.
   minesDialog.addEventListener("close", () => {
@@ -1497,6 +1497,19 @@
     minesReturnTo.focus();
   });
   buildMines();
+
+  // The browser hands the focus back to what opened a dialog, but an item of the Start menu is gone by then.
+  let openedFromStart = false;
+  startPrograms.addEventListener("click", () => {
+    toggleStartMenu(false);
+    openedFromStart = true;
+  });
+  [cheats, cookbook, minesDialog].forEach((dialog) => {
+    dialog.addEventListener("close", () => {
+      if (openedFromStart) startButton.focus();
+      openedFromStart = false;
+    });
+  });
 
   // The prompt under the two static boxes in the MS-DOS window. TYPE reads the real page rather than a copy,
   // so the prompt can't disagree with it, stays in the page's language and also sees closed windows.
@@ -1512,7 +1525,7 @@
         "VER           show the version",
         "FORMAT C:     don't.",
         "",
-        "Cheat codes work here too: see TYPE CHEATS.TXT",
+        "Cheat codes work here too: see TYPE GTAVC_CHEATS.TXT",
       ].join("\n"),
       volume: "Volume in drive C is HLIB_1994",
       directory: "Directory of C:\\",
@@ -1548,7 +1561,7 @@
         "VER           показати версію",
         "FORMAT C:     не треба.",
         "",
-        "Чит-коди працюють і тут: дивись TYPE CHEATS.TXT",
+        "Чит-коди працюють і тут: дивись TYPE GTAVC_CHEATS.TXT",
       ].join("\n"),
       volume: "Том у дисководі C: HLIB_1994",
       directory: "Вміст каталогу C:\\",
@@ -1596,7 +1609,7 @@
     ["FAVORITES.LNK", "#links .body"],
     ["FACTS.TXT", "#facts"],
     ["HIRE_ME.EXE", "#hire-me"],
-    ["CHEATS.TXT", "#cheats .notepad"],
+    ["GTAVC_CHEATS.TXT", "#cheats .notepad"],
     ["COOKBOOK.HLP", "#cookbook .notepad"],
   ].map(([name, selector]) => ({ name, source: document.querySelector(selector) }));
   // Two files that aren't part of this page. Running this one leaves for the 2077 version.

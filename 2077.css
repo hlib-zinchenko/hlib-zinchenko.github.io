@@ -306,6 +306,7 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
 .dialog .content .book-folio { margin: 18px 0 0; color: var(--muted); font: 14px var(--mono); text-align: center; }
 .book-photo { float: right; margin: 0 0 8px 14px; padding: 6px; border: 1px solid rgba(0, 240, 255, 0.4); background: #000; }
 .book-photo img { display: block; width: 150px; height: auto; }
+.book-photo img[width="320"] { width: 200px; }
 
 /* Net links */
 .webring { margin: 8px 0 28px; padding: 16px; border-top: 1px solid var(--red); border-bottom: 1px solid var(--red); text-align: center; }

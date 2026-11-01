@@ -447,7 +447,9 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
   color: #fff;
   outline: none;
 }
-.start-items button { margin-top: 3px; border-top: 2px groove #fff; }
+/* Above the sections, the windows that open over the whole page. Then Shut Down, on its own. */
+.start-programs { display: flex; flex-direction: column; }
+.start-programs, #shut-down { margin-top: 3px; border-top: 2px groove #fff; }
 
 /* Win95's last two screens. A closed <dialog> must keep its display: none, hence [open]. */
 .shutdown {
@@ -532,6 +534,7 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
 /* A real modal: the browser's <dialog>, centred over a dimmed page. */
 dialog.dialog { width: min(420px, calc(100vw - 32px)); margin: auto; padding: 0; text-align: left; }
 dialog.dialog::backdrop { background: rgba(0, 0, 51, 0.65); }
+#cookbook, #cheats { font-size: 17px; }
 
 .window .body {
   margin: 4px;
@@ -545,8 +548,8 @@ dialog.dialog::backdrop { background: rgba(0, 0, 51, 0.65); }
 .window .body a:visited { color: #551a8b; }
 .window .body a:hover { color: #ff0000; background: #ffff00; }
 
-.window h3 { margin: 12px 0 2px; font-size: 19px; overflow-wrap: anywhere; }
-.window h3:first-child { margin-top: 0; }
+.window h3, .dialog h3 { margin: 12px 0 2px; font-size: 19px; overflow-wrap: anywhere; }
+.window h3:first-child, .dialog h3:first-child { margin-top: 0; }
 .window p { margin: 4px 0 8px; }
 
 .new {
@@ -786,6 +789,7 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
 .dialog .content.notepad .book-folio { margin-top: 18px; text-align: center; }
 .book-photo { float: right; margin: 0 0 8px 12px; padding: 4px; background: #c0c0c0; border: 2px outset #fff; }
 .book-photo img { display: block; width: 150px; height: auto; border: 2px inset #fff; image-rendering: pixelated; }
+.book-photo img[width="320"] { width: 200px; }
 
 @media (max-width: 480px) {
   .me img { width: 110px; }
