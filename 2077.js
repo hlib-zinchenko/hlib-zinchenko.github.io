@@ -134,7 +134,10 @@
 
   // The terms in the footer. Both of their buttons mean the same thing.
   const terms = document.getElementById("terms");
-  document.getElementById("terms-open").addEventListener("click", () => terms.showModal());
+  document.getElementById("terms-open").addEventListener("click", (event) => {
+    event.preventDefault();
+    terms.showModal();
+  });
   terms.querySelectorAll(".actions button").forEach((button) => {
     button.addEventListener("click", () => terms.close());
   });

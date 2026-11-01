@@ -917,7 +917,10 @@
   // The same for TERMS.TXT, from the footer and the Start menu. Both of its buttons mean the same thing.
   const terms = document.getElementById("terms");
   ["terms-open", "terms-button"].forEach((id) => {
-    document.getElementById(id).addEventListener("click", () => terms.showModal());
+    document.getElementById(id).addEventListener("click", (event) => {
+      event.preventDefault();
+      terms.showModal();
+    });
   });
   terms.querySelectorAll(".actions button").forEach((button) => {
     button.addEventListener("click", () => terms.close());

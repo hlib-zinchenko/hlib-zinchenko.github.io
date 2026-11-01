@@ -283,6 +283,12 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
 #terms h4 { margin: 18px 0 4px; font: 700 13px var(--head); letter-spacing: 1px; text-transform: uppercase; color: var(--yellow); }
 #terms h4 + p { margin-top: 0; }
 #terms .actions { flex-wrap: wrap; gap: 8px; }
+
+/* Without JavaScript a dialog can't open, so the footer link leads to the terms right on the page. */
+@media (scripting: none) {
+  #terms { display: block; position: static; height: auto; max-height: none; margin: 16px auto; }
+  #terms .actions { display: none; }
+}
 .book-page h3 { margin-top: 0; outline: none; }
 .book-page h4 { margin: 18px 0 4px; font: 700 13px var(--head); letter-spacing: 1px; text-transform: uppercase; color: var(--yellow); }
 .book-page p { margin: 8px 0 4px; }

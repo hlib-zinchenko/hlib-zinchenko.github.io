@@ -769,6 +769,12 @@ dialog.dialog.book[open] { display: flex; flex-direction: column; }
 #terms h3 + p { margin-top: 2px; }
 #terms a { color: #0000ee; }
 #terms .actions button { margin-top: 4px; }
+
+/* Without JavaScript a dialog can't open, so the footer link leads to the terms right on the page. */
+@media (scripting: none) {
+  #terms { display: block; position: static; height: auto; margin: 16px auto; }
+  #terms .actions { display: none; }
+}
 .book-page h3 { font-family: Arial, Helvetica, sans-serif; outline: none; }
 .book-page h4 { margin: 16px 0 2px; font: bold 15px Arial, Helvetica, sans-serif; }
 .book-page ul, .book-page ol { margin: 4px 0 0; padding-left: 1.4em; }
@@ -891,7 +897,6 @@ dialog.dialog.mines {
 }
 
 .fine { position: relative; text-align: center; font-size: 12px; color: #aaaaff; }
-.fine .cheats-link { color: #00ffff; }
 
 .year {
   padding: 0;
