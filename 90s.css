@@ -117,6 +117,17 @@ nav.sidebar a:hover { background: #000080; color: #fff; }
 
 .side { display: grid; gap: 14px; min-width: 0; }
 
+/* On a phone the content comes first: the MeNu shrinks to a two-column strip, and the counter and
+   the other panels drop below the windows instead of pushing them off the first screen. */
+@media (max-width: 640px) {
+  .side { display: contents; }
+  nav.sidebar { order: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  nav.sidebar b { grid-column: 1 / -1; margin-bottom: 0; }
+  nav.sidebar a { margin: 0; }
+  .layout > main { order: 1; }
+  .layout > .side > aside { order: 2; }
+}
+
 /* The panels under the MeNu: the visitor counter, then the weather.
    The weather pictures are drawn in 90s.js, in the style of the cloud on the social cards. */
 .visitors, .icq, .weather, .poll, .jukebox {

@@ -129,8 +129,11 @@ h2 {
   margin: 0 0 1.25rem;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--rule);
-  font-weight: 500;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: lowercase;
+  color: var(--ink);
 }
 
 h2::before { content: "// "; content: "// " / ""; color: var(--accent); }
