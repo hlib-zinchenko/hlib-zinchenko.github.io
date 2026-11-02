@@ -729,6 +729,7 @@
       lunch: [
         ["Kharcho", "even better tomorrow"],
         ["Minestrone", "more parmesan!!!"],
+        ["Corn Soup", "invented by AI, cooked by me"],
       ],
       dinner: [
         ["Fried Pork", "what, again?"],
@@ -741,6 +742,7 @@
       lunch: [
         ["харчо", "завтра буде ще смачніше"],
         ["мінестроне", "більше пармезану!!!"],
+        ["кукурудзяний суп", "придумав ШІ, зварив я"],
       ],
       dinner: [
         ["смажену свинину", "що, знову?"],
