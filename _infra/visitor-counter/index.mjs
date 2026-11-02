@@ -22,7 +22,9 @@ const WEATHER_TTL_SECONDS = 900;
 let weather = { body: null, fetchedAt: 0 };
 
 const fetchWeather = async () => {
-  const response = await fetch(WEATHER_URL, { signal: AbortSignal.timeout(2000) });
+  // A cold start takes about 2 s to get here and back, so the limit must be well above that,
+  // and the function's own timeout in the AWS console above this one.
+  const response = await fetch(WEATHER_URL, { signal: AbortSignal.timeout(5000) });
   if (!response.ok) throw new Error(`Open-Meteo returned ${response.status}`);
   const [kyiv, kremenchuk] = (await response.json()).map(({ current }) => current);
   const city = ({ temperature_2m, weather_code, is_day }) => ({ temp: temperature_2m, code: weather_code, day: is_day === 1 });
