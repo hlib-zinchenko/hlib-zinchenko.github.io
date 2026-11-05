@@ -186,7 +186,7 @@
     "https://github.com/hlib-zinchenko/Hlibz.TypeRules.Analyzers",
     "https://github.com/hlib-zinchenko/Hlibz.Redoc",
     "https://github.com/hlib-zinchenko/dotnet-guardrails",
-    "https://hlib-zinchenko.github.io/flashcards-pwa/",
+    "https://flashcards.hzinchenko.com/",
   ];
   document.getElementById("random-site").addEventListener("click", (e) => {
     e.preventDefault();
