@@ -185,6 +185,7 @@
     "https://github.com/hlib-zinchenko/Hlibz.EntityFrameworkCore.ModelRules",
     "https://github.com/hlib-zinchenko/Hlibz.TypeRules.Analyzers",
     "https://github.com/hlib-zinchenko/Hlibz.Redoc",
+    "https://github.com/hlib-zinchenko/Hlibz.McpDocs.AspNetCore",
     "https://github.com/hlib-zinchenko/dotnet-guardrails",
     "https://flashcards.hzinchenko.com/",
   ];
