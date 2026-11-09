@@ -187,7 +187,7 @@
     "https://github.com/hlib-zinchenko/Hlibz.Redoc",
     "https://github.com/hlib-zinchenko/Hlibz.McpDocs.AspNetCore",
     "https://github.com/hlib-zinchenko/dotnet-guardrails",
-    "https://flashcards.hzinchenko.com/",
+    "https://karbka.com/",
   ];
   document.getElementById("random-site").addEventListener("click", (e) => {
     e.preventDefault();
