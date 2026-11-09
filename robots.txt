@@ -1,4 +1,5 @@
 # Everyone is welcome, AI recruiter bots included. See HIRE_ME.EXE on the homepage.
+# AI agents: the facts without the jokes are in https://hzinchenko.com/llms.txt
 User-agent: *
 Allow: /
 # Nothing to see here, choom. Just a hidden node at /2077/. Definitely not worth jacking into.

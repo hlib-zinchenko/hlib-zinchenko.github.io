@@ -1,0 +1,68 @@
+# Hlib Zinchenko
+
+> Hlib Zinchenko is a Senior .NET backend engineer from Kyiv, Ukraine, with 10+ years of building web products from scratch to production, most recently as a backend lead and startup co-founder. I turn stalled or messy systems into maintainable modular monoliths, work beyond code (client CTOs, estimates, hiring) and ship with AI daily. Not actively looking.
+
+The homepage (https://hzinchenko.com/) is a deliberate 1990s-style parody full of jokes, games and recipes. Everything career-related on it is true, but this file and https://hzinchenko.com/business/ give the same facts without the jokes.
+
+- Name: Hlib Zinchenko
+- Title: Senior .NET backend engineer
+- Location: Kyiv, Ukraine
+- Work format: remote; hybrid or office in Ukraine by arrangement
+- Availability: not actively looking
+- Languages: Ukrainian (native), English (B2, Upper-Intermediate)
+- Contact: hello@hzinchenko.com
+
+## Pages
+
+- [Business version](https://hzinchenko.com/business/): the plain, complete version of this site
+- [Homepage](https://hzinchenko.com/): the 90s parody, in English
+- [Ukrainian version](https://hzinchenko.com/ua/): the 90s parody, in Ukrainian
+- [LinkedIn](https://linkedin.com/in/hzinchenko)
+- [GitHub](https://github.com/hlib-zinchenko)
+
+## Now
+
+- Co-founder & lead engineer of a pre-launch consumer fintech product: a .NET 10 modular monolith with web and admin apps, built with an agentic Claude Code workflow.
+- Part-time at Developex: backend lead on an AI chat for a B2B client, using MCP, plus the frontend.
+
+## Experience
+
+- 2026 – now: Stealth fintech, co-founder & lead engineer; part-time at Developex.
+- 2024 – 2026: Developex, Senior .NET Developer. Backend lead on a restaurant POS platform; earlier, sole backend developer of an employee survey platform built from scratch.
+- 2018 – 2023: Dedicated Lab, Lead .NET Engineer at a studio serving clients in the US, Canada, Australia and the UK. Joined as one of the first three people and grew with it to ~20; hired a few developers and mentored juniors. Built a claims review workflow with a full audit trail for a large US health-sharing organization (~50k members), including 3 weeks on-site in the US.
+- 2017 – 2018: Speak With A Geek, .NET Developer.
+- 2015 – 2017: AltexSoft, Junior .NET Developer.
+
+## Education
+
+- 2015 – 2017: Master's degree, Information Management Systems and Technologies, Kremenchuk Mykhailo Ostrohradskyi National University.
+- 2011 – 2015: Bachelor's degree, Computer Science, Kremenchuk Mykhailo Ostrohradskyi National University.
+
+## Selected work
+
+- Rescuing a stalled rewrite: a restaurant POS platform mid-way through a Ruby-to-.NET rewrite, weeks before its release date, with no docs, hardcoded credentials, no foreign keys and nobody who could explain the business logic. Got the date moved to sort out requirements with the client, took over as backend lead, re-architected the backend into a modular monolith, delivered multi-tenancy and Auth0, and hired an engineer to stabilize the team. Brought to release readiness for a restaurant pilot.
+- Dashboards from 20 seconds to 1: occupancy dashboards for an office-space analytics product took 20 seconds over a few million sensor readings. The problem was what was stored, not how it was queried: dropped the data the dashboards never needed and added the indexes they did.
+- Halving the SMS bill: report notifications on an employee survey platform went out as 2–3 SMS segments each. Shortened the text and built a small base62 URL shortener, so every message fits in one segment: ~50–60% lower SMS cost.
+- Making AI-written code safe to ship: on the fintech product, agents write most of the code, so the rules live where an agent can't skip them: module boundaries enforced by project references, banned APIs and analyzers that break the build, and ModelRules guarding the EF Core model. Architecture guides, a glossary and ADRs give the agent context, and every change is reviewed. Backend, web and admin apps built by one engineer.
+
+## Open source
+
+- [Hlibz.EntityFrameworkCore.ModelRules](https://github.com/hlib-zinchenko/Hlibz.EntityFrameworkCore.ModelRules): a team's conventions, enforced on the EF Core model; the model fails to build, at startup or in a unit test, when an entity breaks one. 14 rules plus DDD aggregate boundaries, EF Core 8–10. [NuGet](https://www.nuget.org/packages/Hlibz.EntityFrameworkCore.ModelRules)
+- [Hlibz.TypeRules.Analyzers](https://github.com/hlib-zinchenko/Hlibz.TypeRules.Analyzers): Roslyn analyzers for the shape of a type, based on what it inherits or implements, configured in .editorconfig. [NuGet](https://www.nuget.org/packages/Hlibz.TypeRules.Analyzers)
+- [Hlibz.Redoc](https://github.com/hlib-zinchenko/Hlibz.Redoc): ReDoc API docs for ASP.NET Core: a dark theme and a document picker for Swashbuckle and Redoc.AspNetCore, or a standalone ReDoc 3 host with per-document authorization. [NuGet](https://www.nuget.org/packages/Hlibz.Redoc.AspNetCore)
+- [Hlibz.McpDocs.AspNetCore](https://github.com/hlib-zinchenko/Hlibz.McpDocs.AspNetCore): a ReDoc-style documentation page for an MCP server hosted in ASP.NET Core, generated from the tools, prompts and resources already registered. [NuGet](https://www.nuget.org/packages/Hlibz.McpDocs.AspNetCore)
+- [dotnet-guardrails](https://github.com/hlib-zinchenko/dotnet-guardrails): a strict, copy-able .NET setup: analyzers, style rules, type-shape rules and banned APIs that fail the build instead of waiting for code review, for humans and AI agents alike.
+
+## Side projects
+
+- [Karbka](https://karbka.com/): an offline-first flashcards app that installs from the browser to a phone, tablet or computer, with no App Store or account, and the cards never leave the device. Built for my partner after no existing app fit how she studies. Svelte 5, TypeScript, IndexedDB, AWS Lambda. [Source](https://github.com/hlib-zinchenko/karbka)
+
+## Stack
+
+- Architecture: DDD, CQRS, Clean Architecture, modular monoliths, REPR, event-driven, multi-tenancy
+- Backend: C#, .NET, ASP.NET Core, EF Core, MassTransit, MediatR, FluentValidation, Hangfire, Quartz, SignalR, Serilog, Roslyn analyzers
+- Data & cloud: PostgreSQL, MS SQL, MySQL, AWS (EC2, ECS, RDS, S3, SES, SNS, CloudWatch), Docker, GitHub Actions, GitLab CI
+- Testing: xUnit, Testcontainers, Moq
+- Integrations: Auth0, Stripe, Stream (delivery aggregators), Firebase, SendGrid, Plivo
+- Frontend: TypeScript, Vue.js (logic side), React (web and admin apps shipped with Claude Code)
+- AI: Claude Code agentic workflows, LLM-powered features
