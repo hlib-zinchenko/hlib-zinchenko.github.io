@@ -681,7 +681,7 @@
         ["Fight Club", "we do not talk about it"],
         ["The Three-Body Problem", "the universe is a dark forest"],
         ["Greek myths", "homework for Hades II"],
-        ["Fourth Wing", "my girlfriend insists"],
+        ["Fourth Wing", "my fiancée insists"],
       ]],
     },
     uk: {
@@ -717,7 +717,7 @@
         ["«Бійцівський клуб»", "про нього не говорять"],
         ["«Проблему трьох тіл»", "всесвіт — темний ліс"],
         ["грецькі міфи", "домашка до Hades II"],
-        ["«Четверте крило»", "моя дівчина наполягає"],
+        ["«Четверте крило»", "моя наречена наполягає"],
       ]],
     },
   };
